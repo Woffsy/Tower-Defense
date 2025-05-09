@@ -8,47 +8,44 @@ const ctx = canvas.getContext("2d");
 
 const tower = [];
 
+let cash = 250
+
+function showCash() {
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText("Cash: " + cash, 10, 20);
+}
+
 addEventListener("click", (event) => {
-  const x = event.clientX;
-  const y = event.clientY;
+    if (cash >= 100) {
+        const x = event.clientX;
+        const y = event.clientY;
+        
+        const newTower = {
+            x: x,
+            y: y,
+            radius: 20,
+            farge: "blue",
+            attackCooldown: 0,
+            attackSpeed: 1.5, // Antall angrep per sekund
+            range: 100,
+        };
+        tower.push(newTower);
+        cash -= 100; // Reduser cash med 100 når en ny tårn plasseres
+    } else {
+       return
+    }
 
-  const newTower = {
-    x: x,
-    y: y,
-    radius: 20,
-    farge: "blue",
-    attackCooldown: 0,
-    attackSpeed: 1.5, // Antall angrep per sekund
-    range: 100,
-  };
-
-  tower.push(newTower);
 });
 
-// const fiende1 = {
-//   x: -20,
-//   y: 100,
-//   radius: 20,
-//   farge: "red",
-//   hastighetX: 1.5,
-//   hastighetY: 0,
-// };
-
-// const fiende2 = {
-//   x: -65,
-//   y: 100,
-//   radius: 20,
-//   farge: "red",
-//   hastighetX: 1.5,
-//   hastighetY: 0,
-// };
-
 const fiender = [];
+let maksFiender = 10;
+let antallFiender = 0;
 let x = -20;
 let y = 100;
-let radius = 20;
+let radius = 0;
 let farge = "red";
-let hastighetX = 2;
+let hastighetX = 0;
 let hastighetY = 0;
 
 function fiende(x, y) {
@@ -57,12 +54,12 @@ function fiende(x, y) {
     y: y,
     radius: 20,
     farge: "red",
-    hastighetX: 1.5,
+    hastighetX: 2,
     hastighetY: 0,
   };
 }
 
-for (i = 0; i < 10; i++) {
+for (antallFiender = 0; antallFiender < maksFiender; antallFiender++) {
     fiender.push(fiende(x, y, radius, farge, hastighetX, hastighetY));
     x -= 45;
 }
@@ -89,8 +86,9 @@ for (const fiende of fiender) {
     if (avstand < tower.radius + fiende.radius + tower.range) {
         tower.farge = "green"; // Endre farge til grønn
         if (tower.attackCooldown === 0) {
-            tower.attackCooldown = tower.attackSpeed * 60; // Reset cooldown
+            tower.attackCooldown = tower.attackSpeed * 120; // Reset cooldown
             fiender.splice(fiender.indexOf(fiende), 1); // Fjern fienden fra listen
+            cash += 50
             break; // Avslutt løkken etter å ha angrepet én fiende
         }
         break;
@@ -142,9 +140,8 @@ function oppdaterAlt() {
   for (const t of tower) {
     oppdaterTower(t, fiender);
   }
-
-//   requestAnimationFrame(oppdaterAlt);
+  showCash();
 }
 
-setInterval(oppdaterAlt, 1000 / 60); // 60 FPS
+setInterval(oppdaterAlt, 1000 / 120); // 120 FPS
 console.log("Game started");
