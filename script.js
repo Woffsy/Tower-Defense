@@ -19,7 +19,7 @@ function enemyPath() {
 
 const tower = [];
 
-let cash = 250;
+let cash = 200;
 let lives = 2;
 
 function showLives() {
@@ -45,8 +45,9 @@ addEventListener("click", (event) => {
       radius: 20,
       farge: "blue",
       attackCooldown: 0,
-      attackSpeed: 1, // Antall angrep per sekund
-      range: 75,
+      attackSpeed: 2.5, // Antall angrep per sekund
+      attackDamage: 1,
+      range: 150,
     };
     tower.push(newTower);
     cash -= 100; // Reduser cash med 100 når en ny tårn plasseres
@@ -75,6 +76,7 @@ function fiende(x, y) {
     hastighet: 4,
     hastighetX: 4,
     hastighetY: 0,
+    health: 3,
   };
 }
 
@@ -106,8 +108,12 @@ function oppdaterTower(tower, fiender) {
       tower.farge = "green"; // Endre farge til grønn
       if (tower.attackCooldown === 0) {
         tower.attackCooldown = 120 / tower.attackSpeed; // Reset cooldown
-        fiender.splice(fiender.indexOf(fiende), 1); // Fjern fienden fra listen
-        cash += 50;
+        fiende.health -= tower.attackDamage; // Reduser fiendens helse
+        fiende.farge = "purple"
+        if (fiende.health <= 0) {
+          fiender.splice(fiender.indexOf(fiende), 1); // Fjern fienden fra listen
+        }
+        cash += 25;
         break; // Avslutt løkken etter å ha angrepet én fiende
       }
       break;
@@ -145,18 +151,21 @@ function oppdaterFiende(fiende) {
     fiende.hastighetY = 0;
     fiende.hastighetX = 0;
   }
-if (fiende.x < 0 + fiende.radius) {
-    if (fiende.y >= HEIGHT - 100 - fiende.radius && fiende.y <= HEIGHT - 100 + fiende.radius) {
-        lives -= 1;
-        fiender.splice(fiender.indexOf(fiende), 1); // Remove the enemy after it reaches the end
-        if (lives <= 0) {
-            alert("Game Over. Refresh the page to play again.");
-            for (let i = 0; i < fiender.length; i++) {
-                fiender.splice(i); // Clear all enemies
-            }
+  if (fiende.x < 0 + fiende.radius) {
+    if (
+      fiende.y >= HEIGHT - 100 - fiende.radius &&
+      fiende.y <= HEIGHT - 100 + fiende.radius
+    ) {
+      lives -= 1;
+      fiender.splice(fiender.indexOf(fiende), 1); // Remove the enemy after it reaches the end
+      if (lives <= 0) {
+        alert("Game Over. Refresh the page to play again.");
+        for (let i = 0; i < fiender.length; i++) {
+          fiender.splice(i); // Clear all enemies
         }
+      }
     }
-}
+  }
 }
 function clearCanvas() {
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
