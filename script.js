@@ -4,6 +4,9 @@ const canvas = document.querySelector("canvas");
 canvas.height = HEIGHT;
 canvas.width = WIDTH;
 
+const frameRate = 60;
+const fpsInterval = 1000 / frameRate;
+
 const ctx = canvas.getContext("2d");
 
 function enemyPath() {
@@ -48,7 +51,7 @@ addEventListener("click", (event) => {
       rotation: 0,
 
       attackCooldown: 0,
-      attackSpeed: 2.5,
+      attackSpeed: 1.25,
       attackDamage: 1,
       range: 150,
 
@@ -102,16 +105,23 @@ function tegnFiende(fiende) {
 }
 
 function tegnTower(tower) {
+  ctx.save();
+
+  ctx.translate(tower.x, tower.y);
+  ctx.rotate(tower.rotation);
   ctx.beginPath();
-  ctx.arc(tower.x, tower.y, tower.radius, 0, Math.PI * 2);
+  ctx.arc(0, 0, tower.radius, 0, Math.PI * 2);
   ctx.fillStyle = tower.farge;
   ctx.fill();
+
   ctx.beginPath();
-  ctx.moveTo(tower.x, tower.y);
-  ctx.lineWidth = 2;
+  ctx.moveTo(0, 0);
+  ctx.lineTo(tower.radius, 0);
+  ctx.lineWidth = 4;
   ctx.strokeStyle = "black";
-  ctx.lineTo(tower.x, tower.y - tower.radius + 2);
   ctx.stroke();
+
+  ctx.restore();
 }
 
 function AttackAngle(tower, fiende){
@@ -126,9 +136,12 @@ function angrep(tower, fiender) {
 
     if (avstand < tower.radius + fiende.radius + tower.range) {
       tower.farge = "green"; 
+      fiendeFunnet = true;
+      tower.rotation = AttackAngle(tower, fiende);
+
 
       if (tower.attackCooldown === 0) {
-        tower.attackCooldown = 120 / tower.attackSpeed; 
+        tower.attackCooldown = frameRate / tower.attackSpeed; 
         angrepAnimasjon(tower, fiende); 
         fiende.health -= tower.attackDamage; 
 
@@ -149,7 +162,9 @@ function angrep(tower, fiender) {
         break;
       }
       break;
-    } else {
+    } 
+    
+    if (!fiendeFunnet && !tower.angriper) {
       tower.farge = "blue"; 
     }
   }
@@ -248,5 +263,5 @@ function oppdaterAlt() {
   showLives();
 }
 
-setInterval(oppdaterAlt, 1000 / 120); // 120 FPS
+setInterval(oppdaterAlt, fpsInterval); // 60 FPS
 console.log("Game started");
