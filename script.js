@@ -11,7 +11,7 @@ function enemyPath() {
   ctx.beginPath();
   ctx.moveTo(0, 100);
   ctx.fillStyle = "gray";
-  ctx.lineWidth = 5;
+  ctx.lineWidth = 20;
   ctx.lineTo(WIDTH - 100, 100);
   ctx.lineTo(WIDTH - 100, HEIGHT - 100);
   ctx.lineTo(0, HEIGHT - 100);
