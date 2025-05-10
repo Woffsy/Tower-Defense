@@ -45,8 +45,10 @@ addEventListener("click", (event) => {
       y: y,
       radius: 20,
       farge: "blue",
+      rotation: 0,
+
       attackCooldown: 0,
-      attackSpeed: 2.5, // Antall angrep per sekund
+      attackSpeed: 2.5,
       attackDamage: 1,
       range: 150,
 
@@ -54,9 +56,10 @@ addEventListener("click", (event) => {
       fiendeCor: null,
       angrepsTid: 0,
       angrepsTidMax: 15,
+      
     };
     tower.push(newTower);
-    cash -= 100; // Reduser cash med 100 når en ny tårn plasseres
+    cash -= 100; 
   } else {
     return;
   }
@@ -98,15 +101,21 @@ function tegnFiende(fiende) {
   ctx.fill();
 }
 
+function tegnTower(tower) {
+  ctx.beginPath();
+  ctx.arc(tower.x, tower.y, tower.radius, 0, Math.PI * 2);
+  ctx.fillStyle = tower.farge;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(tower.x, tower.y);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "black";
+  ctx.lineTo(tower.x, tower.y - tower.radius + 2);
+  ctx.stroke();
+}
+
 function AttackAngle(tower, fiende){
-  const dx = tower.x - fiende.x;
-  const dy = tower.y - fiende.y;
-
-  const radians = Math.atan2(dy, dx);
-
-  let angle = radians * (180 / Math.PI);
-
-  return angle;
+  return Math.atan2(fiende.y - tower.y, fiende.x - tower.x);
 }
 
 function angrep(tower, fiender) {
@@ -116,12 +125,12 @@ function angrep(tower, fiender) {
     const avstand = Math.sqrt(dx * dx + dy * dy);
 
     if (avstand < tower.radius + fiende.radius + tower.range) {
-      tower.farge = "green"; // Endre farge til grønn
+      tower.farge = "green"; 
 
       if (tower.attackCooldown === 0) {
-        tower.attackCooldown = 120 / tower.attackSpeed; // Reset cooldown
-        angrepAnimasjon(tower, fiende); // Kall angrepsanimasjon
-        fiende.health -= tower.attackDamage; // Reduser fiendens helse
+        tower.attackCooldown = 120 / tower.attackSpeed; 
+        angrepAnimasjon(tower, fiende); 
+        fiende.health -= tower.attackDamage; 
 
         if (fiende.health == 2) {
           fiende.farge = "purple"
@@ -134,14 +143,14 @@ function angrep(tower, fiender) {
         tower.angrepsTid = tower.angrepsTidMax;
 
         if (fiende.health <= 0) {
-          fiender.splice(fiender.indexOf(fiende), 1); // Fjern fienden fra listen
+          fiender.splice(fiender.indexOf(fiende), 1); 
         }
         cash += 25;
-        break; // Avslutt løkken etter å ha angrepet én fiende
+        break;
       }
       break;
     } else {
-      tower.farge = "blue"; // Tilbakestill fargen til blå
+      tower.farge = "blue"; 
     }
   }
 }
@@ -156,10 +165,7 @@ function angrepAnimasjon(tower, fiende) {
 }
 
 function oppdaterTower(tower, fiender) {
-  ctx.beginPath();
-  ctx.arc(tower.x, tower.y, tower.radius, 0, Math.PI * 2);
-  ctx.fillStyle = tower.farge;
-  ctx.fill();
+  tegnTower(tower);
 
   angrep(tower, fiender);
 
@@ -180,13 +186,13 @@ function oppdaterTower(tower, fiender) {
   }
 
   if (fiender.length === 0 && !tower.angriper) {
-    tower.farge = "blue"; // Tilbakestill fargen til blå
+    tower.farge = "blue"; 
   }
 
-  tower.attackCooldown -= 1; // Reduser cooldown
+  tower.attackCooldown -= 1; 
 
   if (tower.attackCooldown < 0) {
-    tower.attackCooldown = 0; // Sørg for at cooldown ikke blir negativ
+    tower.attackCooldown = 0; 
   }
 }
 
@@ -214,11 +220,11 @@ function oppdaterFiende(fiende) {
       fiende.y <= HEIGHT - 100 + fiende.radius
     ) {
       lives -= 1;
-      fiender.splice(fiender.indexOf(fiende), 1); // Remove the enemy after it reaches the end
+      fiender.splice(fiender.indexOf(fiende), 1);
       if (lives <= 0) {
         alert("Game Over. Refresh the page to play again.");
         for (let i = 0; i < fiender.length; i++) {
-          fiender.splice(i); // Clear all enemies
+          fiender.splice(i); 
         }
       }
     }
