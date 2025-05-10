@@ -7,6 +7,7 @@ canvas.width = WIDTH;
 const ctx = canvas.getContext("2d");
 
 function enemyPath() {
+  ctx.strokeStyle = "gray";
   ctx.beginPath();
   ctx.moveTo(0, 100);
   ctx.fillStyle = "gray";
@@ -48,6 +49,11 @@ addEventListener("click", (event) => {
       attackSpeed: 2.5, // Antall angrep per sekund
       attackDamage: 1,
       range: 150,
+
+      angriper: false,
+      fiendeCor: null,
+      angrepsTid: 0,
+      angrepsTidMax: 15,
     };
     tower.push(newTower);
     cash -= 100; // Reduser cash med 100 når en ny tårn plasseres
@@ -92,13 +98,18 @@ function tegnFiende(fiende) {
   ctx.fill();
 }
 
-function oppdaterTower(tower, fiender) {
-  ctx.beginPath();
-  ctx.arc(tower.x, tower.y, tower.radius, 0, Math.PI * 2);
-  ctx.fillStyle = tower.farge;
-  ctx.fill();
+function AttackAngle(tower, fiende){
+  const dx = tower.x - fiende.x;
+  const dy = tower.y - fiende.y;
 
-  // Skift farge dersom en fiende er i nærheten
+  const radians = Math.atan2(dy, dx);
+
+  let angle = radians * (180 / Math.PI);
+
+  return angle;
+}
+
+function angrep(tower, fiender) {
   for (const fiende of fiender) {
     const dx = tower.x - fiende.x;
     const dy = tower.y - fiende.y;
@@ -106,10 +117,22 @@ function oppdaterTower(tower, fiender) {
 
     if (avstand < tower.radius + fiende.radius + tower.range) {
       tower.farge = "green"; // Endre farge til grønn
+
       if (tower.attackCooldown === 0) {
         tower.attackCooldown = 120 / tower.attackSpeed; // Reset cooldown
+        angrepAnimasjon(tower, fiende); // Kall angrepsanimasjon
         fiende.health -= tower.attackDamage; // Reduser fiendens helse
-        fiende.farge = "purple"
+
+        if (fiende.health == 2) {
+          fiende.farge = "purple"
+        } else if (fiende.health == 1) {
+          fiende.farge = "black"
+        }
+
+        tower.angriper = true;
+        tower.fiendeCor = {x: fiende.x, y: fiende.y};
+        tower.angrepsTid = tower.angrepsTidMax;
+
         if (fiende.health <= 0) {
           fiender.splice(fiender.indexOf(fiende), 1); // Fjern fienden fra listen
         }
@@ -121,8 +144,42 @@ function oppdaterTower(tower, fiender) {
       tower.farge = "blue"; // Tilbakestill fargen til blå
     }
   }
+}
 
-  if (fiender.length === 0) {
+function angrepAnimasjon(tower, fiende) {
+  const angle = AttackAngle(tower, fiende);
+  ctx.lineColor = "red";
+  ctx.beginPath();
+  ctx.moveTo(tower.x, tower.y);
+  ctx.lineTo(fiende.x, fiende.y);
+  ctx.stroke()
+}
+
+function oppdaterTower(tower, fiender) {
+  ctx.beginPath();
+  ctx.arc(tower.x, tower.y, tower.radius, 0, Math.PI * 2);
+  ctx.fillStyle = tower.farge;
+  ctx.fill();
+
+  angrep(tower, fiender);
+
+  if (tower.angriper && tower.fiendeCor) {
+    ctx.beginPath();
+    ctx.moveTo(tower.x, tower.y);
+    ctx.lineTo(tower.fiendeCor.x, tower.fiendeCor.y);
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    tower.angrepsTid--;
+
+    if (tower.angrepsTid <= 0) {
+      tower.angriper = false;
+      tower.fiendeCor = null;
+    }
+  }
+
+  if (fiender.length === 0 && !tower.angriper) {
     tower.farge = "blue"; // Tilbakestill fargen til blå
   }
 
