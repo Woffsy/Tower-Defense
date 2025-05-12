@@ -38,34 +38,92 @@ function showCash() {
   ctx.fillText("Cash: " + cash, 10, 20);
 }
 
+let placingTower1 = false;
+let placingTower2 = false;
+
+addEventListener("keypress", (event) => {
+  if (event.key === "1")
+    if (placingTower1 === true) {
+      placingTower1 = false;
+    } else {
+      placingTower1 = true;
+      placingTower2 = false;
+    }
+  if (event.key === "2")
+    if (placingTower2 === true) {
+      placingTower2 = false;
+    } else {
+      placingTower2 = true;
+      placingTower1 = false;
+    }
+});
+
+function showPlacingTower() {
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "black";
+  if (placingTower1 === true) {
+    ctx.fillText("Placing Tower 1", 10, 80);
+  } else if (placingTower2 === true) {
+    ctx.fillText("Placing Tower 2", 10, 80);
+  }
+}
+
 addEventListener("click", (event) => {
-  if (cash >= 100) {
     const x = event.clientX;
     const y = event.clientY;
+    let newTower = null;
 
-    const newTower = {
-      x: x,
-      y: y,
-      radius: 20,
-      farge: "blue",
-      rotation: 0,
+    if (placingTower1 === true) {
+      if (cash >= 100) {
+      newTower = {
+        x: x,
+        y: y,
+        radius: 20,
+        farge: "blue",
+        rotation: 0,
 
-      attackCooldown: 0,
-      attackSpeed: 1.25,
-      attackDamage: 1,
-      range: 150,
+        attackCooldown: 0,
+        attackSpeed: 1.25,
+        attackDamage: 1,
+        range: 150,
 
-      angriper: false,
-      fiendeCor: null,
-      angrepsTid: 0,
-      angrepsTidMax: 15,
-      
-    };
-    tower.push(newTower);
-    cash -= 100; 
-  } else {
-    return;
-  }
+        angriper: false,
+        fiendeCor: null,
+        angrepsTid: 0,
+        angrepsTidMax: 15,
+      };
+      tower.push(newTower);
+      cash -= 100;
+      } else {
+        return;
+      }
+    } else if (placingTower2 === true) {
+      if (cash >= 200) {
+      newTower = {
+        x: x,
+        y: y,
+        radius: 30,
+        farge: "red",
+        rotation: 0,
+
+        attackCooldown: 0,
+        attackSpeed: 1,
+        attackDamage: 2,
+        range: 500,
+
+        angriper: false,
+        fiendeCor: null,
+        angrepsTid: 0,
+        angrepsTidMax: 15,
+      };
+      tower.push(newTower);
+      cash -= 200;
+    } else {
+      return;
+    }
+    } else {
+      return;
+    }
 });
 
 const fiender = [];
@@ -73,27 +131,25 @@ let maksFiender = 10;
 let antallFiender = 0;
 let x = -20;
 let y = 100;
-let radius = 0;
+let radius = 20;
 let farge = "red";
-let hastighetX = 0;
-let hastighetY = 0;
 let hastighet = 4;
 
-function fiende(x, y) {
+function fiende(x, y, radius, farge, hastighet) {
   return {
     x: x,
     y: y,
-    radius: 20,
-    farge: "red",
-    hastighet: 4,
-    hastighetX: 4,
+    radius: radius,
+    farge: farge,
+    hastighet: hastighet,
+    hastighetX: hastighet,
     hastighetY: 0,
     health: 3,
   };
 }
 
 for (antallFiender = 0; antallFiender < maksFiender; antallFiender++) {
-  fiender.push(fiende(x, y, radius, farge, hastighetX, hastighetY));
+  fiender.push(fiende(x, y, radius, farge, hastighet));
   x -= 65;
 }
 
@@ -135,7 +191,6 @@ function angrep(tower, fiender) {
     const avstand = Math.sqrt(dx * dx + dy * dy);
 
     if (avstand < tower.radius + fiende.radius + tower.range) {
-      tower.farge = "green"; 
       fiendeFunnet = true;
       tower.rotation = AttackAngle(tower, fiende);
 
@@ -163,10 +218,6 @@ function angrep(tower, fiender) {
       }
       break;
     } 
-    
-    if (!fiendeFunnet && !tower.angriper) {
-      tower.farge = "blue"; 
-    }
   }
 }
 
@@ -261,6 +312,7 @@ function oppdaterAlt() {
   }
   showCash();
   showLives();
+  showPlacingTower();
 }
 
 setInterval(oppdaterAlt, fpsInterval); // 60 FPS
