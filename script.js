@@ -15,9 +15,12 @@ function enemyPath() {
   ctx.moveTo(0, 100);
   ctx.fillStyle = "gray";
   ctx.lineWidth = 20;
-  ctx.lineTo(WIDTH - 100, 100);
+  ctx.lineTo(WIDTH - 500, 100);
+  ctx.lineTo(WIDTH - 500, HEIGHT - 500);
+  ctx.lineTo(WIDTH - 100, HEIGHT - 500);
   ctx.lineTo(WIDTH - 100, HEIGHT - 100);
-  ctx.lineTo(0, HEIGHT - 100);
+  ctx.lineTo(WIDTH - 800, HEIGHT - 100);
+  ctx.lineTo(WIDTH - 800, HEIGHT);
   ctx.stroke();
 }
 
@@ -40,6 +43,7 @@ function showCash() {
 
 let placingTower1 = false;
 let placingTower2 = false;
+let placingTower3 = false;
 
 addEventListener("keypress", (event) => {
   if (event.key === "1")
@@ -56,6 +60,14 @@ addEventListener("keypress", (event) => {
       placingTower2 = true;
       placingTower1 = false;
     }
+  if (event.key === "3") 
+    if (placingTower3 === true) {
+      placingTower3 = false;
+    } else {
+      placingTower3 = true;
+      placingTower1 = false;
+      placingTower2 = false;
+    }
 });
 
 function showPlacingTower() {
@@ -65,6 +77,8 @@ function showPlacingTower() {
     ctx.fillText("Placing Tower 1", 10, 80);
   } else if (placingTower2 === true) {
     ctx.fillText("Placing Tower 2", 10, 80);
+  } else if (placingTower3 === true) {
+    ctx.fillText("Placing Tower 3", 10, 80);
   }
 }
 
@@ -83,7 +97,7 @@ addEventListener("click", (event) => {
         rotation: 0,
 
         attackCooldown: 0,
-        attackSpeed: 1.25,
+        attackSpeed: 1,
         attackDamage: 1,
         range: 150,
 
@@ -107,9 +121,9 @@ addEventListener("click", (event) => {
         rotation: 0,
 
         attackCooldown: 0,
-        attackSpeed: 1,
+        attackSpeed: 0.75,
         attackDamage: 2,
-        range: 500,
+        range: 350,
 
         angriper: false,
         fiendeCor: null,
@@ -121,6 +135,32 @@ addEventListener("click", (event) => {
     } else {
       return;
     }
+    } else if (placingTower3 === true) {
+      if (cash >= 150) {
+        newTower = {
+        x: x,
+        y: y, 
+        radius: 15,
+        farge: "lightblue",
+        rotation: 0,
+
+        attackCooldown: 0,
+        attackSpeed: 0.1,
+        attackDamage: 0, 
+        stun: 2,
+        stunDuration: 60,
+        range: 200,
+
+        angriper: false,
+        fiendeCor: null,
+        angrepsTid: 0,
+        angrepsTidMax: 15,
+      }
+      cash -= 150;
+      tower.push(newTower);
+      } else {
+        return;
+      }
     } else {
       return;
     }
@@ -133,18 +173,22 @@ let x = -20;
 let y = 100;
 let radius = 20;
 let farge = "red";
-let hastighet = 4;
+let hastighet = 2;
 
 function fiende(x, y, radius, farge, hastighet) {
   return {
     x: x,
     y: y,
+    distance: x,
     radius: radius,
     farge: farge,
     hastighet: hastighet,
     hastighetX: hastighet,
     hastighetY: 0,
     health: 3,
+
+    stunned: false,
+    stunDuration: 0,
   };
 }
 
@@ -196,6 +240,10 @@ function angrep(tower, fiender) {
 
 
       if (tower.attackCooldown === 0) {
+        if (tower.stun) {
+          fiende.stunned = true;
+          fiende.stunDuration = tower.stunDuration;
+        }
         tower.attackCooldown = frameRate / tower.attackSpeed; 
         angrepAnimasjon(tower, fiende); 
         fiende.health -= tower.attackDamage; 
@@ -263,18 +311,38 @@ function oppdaterTower(tower, fiender) {
 }
 
 function oppdaterFiende(fiende) {
-  if (fiende.x > WIDTH - 100) {
+  if (fiende.x > WIDTH - 500) {
     fiende.hastighetY = hastighet;
     fiende.hastighetX = 0;
   }
 
+  if (fiende.y > HEIGHT - 500) {
+    fiende.hastighetY = 0;
+    fiende.hastighetX = hastighet;
+  }
+  if (fiende.x > WIDTH - 100) {
+    fiende.hastighetY = hastighet;
+    fiende.hastighetX = 0;
+  }
   if (fiende.y > HEIGHT - 100) {
     fiende.hastighetY = 0;
     fiende.hastighetX = -hastighet;
   }
+  if (fiende.x < WIDTH - 800 && fiende.y > HEIGHT - 100) {
+    fiende.hastighetY = hastighet;
+    fiende.hastighetX = 0;
+  }
 
-  fiende.x += fiende.hastighetX;
-  fiende.y += fiende.hastighetY;
+  if (fiende.stunned === false) {
+    fiende.x += fiende.hastighetX;
+    fiende.y += fiende.hastighetY;
+    fiende.distance += fiende.hastighet;
+  } else {
+    fiende.stunDuration--;
+    if (fiende.stunDuration <= 0) {
+      fiende.stunned = false;
+    }
+  }
 
   if (fiende.y > HEIGHT + fiende.radius) {
     fiende.hastighetY = 0;
@@ -300,6 +368,12 @@ function clearCanvas() {
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
 }
 
+function sorterFiendeList(fiender) {
+  fiender.sort((a, b) => {
+    return b.distance - a.distance;
+  });
+}
+
 function oppdaterAlt() {
   clearCanvas();
   enemyPath();
@@ -310,6 +384,8 @@ function oppdaterAlt() {
   for (const t of tower) {
     oppdaterTower(t, fiender);
   }
+
+  sorterFiendeList(fiender);
   showCash();
   showLives();
   showPlacingTower();
