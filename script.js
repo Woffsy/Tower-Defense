@@ -4,7 +4,7 @@ const canvas = document.querySelector("canvas");
 canvas.height = HEIGHT;
 canvas.width = WIDTH;
 
-const baneWIDTH = WIDTH - 300
+const baneWIDTH = WIDTH - 350
 
 const frameRate = 60;
 const fpsInterval = 1000 / frameRate;
@@ -19,12 +19,74 @@ function enemyPath() {
   ctx.lineWidth = 20;
   ctx.lineTo(baneWIDTH - 500, 100);
   ctx.lineTo(baneWIDTH - 500, HEIGHT - 500);
-  ctx.lineTo(baneWIDTH - 100, HEIGHT - 500);
-  ctx.lineTo(baneWIDTH - 100, HEIGHT - 100);
+  ctx.lineTo(baneWIDTH - 50, HEIGHT - 500);
+  ctx.lineTo(baneWIDTH - 50, HEIGHT - 100);
   ctx.lineTo(baneWIDTH - 800, HEIGHT - 100);
   ctx.lineTo(baneWIDTH - 800, HEIGHT);
   ctx.stroke();
 }
+
+function towerView() {
+  ctx.beginPath();
+  ctx.moveTo(baneWIDTH, 0);
+  ctx.rect(baneWIDTH, 0, WIDTH, HEIGHT);
+  ctx.fillStyle = "lightgray";
+  ctx.fill();
+  towerViewTower1();
+  towerViewTower2();
+  towerViewTower3();
+}
+
+function towerViewTower1() {
+  ctx.beginPath();
+  ctx.moveTo(baneWIDTH+25, 0);
+  ctx.rect(baneWIDTH+25, 25, 300, 200);
+  ctx.fillStyle = "lightblue";
+  ctx.fill();
+  ctx.save();
+  ctx.translate(baneWIDTH + 25, 25);
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "black";
+  ctx.fillText("Basic Shooter", 10, 25);
+  ctx.fillText("Damage: 2", 10, 50);
+  ctx.fillText("Attack Speed: 1", 10, 75);
+  ctx.fillText("Range: 150", 10, 100);
+  ctx.restore();
+}
+function towerViewTower2() {
+  ctx.beginPath();
+  ctx.moveTo(baneWIDTH+25, 0);
+  ctx.rect(baneWIDTH+25, 275, 300, 200);
+  ctx.fillStyle = "red";
+  ctx.fill();
+  ctx.save();
+  ctx.translate(baneWIDTH + 25, 275);
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "black";
+  ctx.fillText("Sniper", 10, 25);
+  ctx.fillText("Damage: 4", 10, 50);
+  ctx.fillText("Attack Speed: 0.75", 10, 75);
+  ctx.fillText("Range: 350", 10, 100);
+  ctx.restore();
+}
+function towerViewTower3() {
+  ctx.beginPath();
+  ctx.moveTo(baneWIDTH+25, 0);
+  ctx.rect(baneWIDTH+25, 525, 300, 200);
+  ctx.fillStyle = "lightgreen";
+  ctx.fill();
+  ctx.save();
+  ctx.translate(baneWIDTH + 25, 525);
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "black";
+  ctx.fillText("Stunner", 10, 25);
+  ctx.fillText("Damage: 1", 10, 50);
+  ctx.fillText("Attack Speed: 0.25", 10, 75);
+  ctx.fillText("Range: 150", 10, 100);
+  ctx.fillText("Stun: 2", 10, 125);
+  ctx.restore();
+}
+
 
 const tower = [];
 
@@ -95,7 +157,7 @@ addEventListener("click", (event) => {
         x: x,
         y: y,
         radius: 20,
-        farge: "blue",
+        farge: "lightblue",
         rotation: 0,
 
         attackCooldown: 0,
@@ -147,7 +209,7 @@ addEventListener("click", (event) => {
         x: x,
         y: y,
         radius: 15,
-        farge: "lightblue",
+        farge: "lightgreen",
         rotation: 0,
 
         attackCooldown: 0,
@@ -155,7 +217,7 @@ addEventListener("click", (event) => {
         attackDamage: 1,
         stun: 2,
         stunDuration: 60,
-        range: 200,
+        range: 150,
 
         angriper: false,
         fiendeCor: null,
@@ -326,7 +388,7 @@ function oppdaterFiende(fiende) {
     fiende.hastighetY = 0;
     fiende.hastighetX = hastighet;
   }
-  if (fiende.x > baneWIDTH - 100) {
+  if (fiende.x > baneWIDTH - 50) {
     fiende.hastighetY = hastighet;
     fiende.hastighetX = 0;
   }
@@ -395,7 +457,8 @@ function oppdaterAlt() {
   showCash();
   showLives();
   showPlacingTower();
-  if (fiender.length === 0) {
+  towerView();
+  if (fiender.length === 0 && lives > 0) {
     console.log("Wave cleared");
     genererWave();
   }
