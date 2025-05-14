@@ -169,7 +169,8 @@ addEventListener("click", (event) => {
   const y = event.clientY;
   let newTower = null;
 
-  if (placingTower1 === true) {
+  if (x < baneWIDTH) {
+      if (placingTower1 === true) {
     if (cash >= 100) {
       newTower = {
         x: x,
@@ -193,6 +194,7 @@ addEventListener("click", (event) => {
       tower.push(newTower);
       cash -= 100;
     } else {
+      console.log("Not enough cash");
       return;
     }
   } else if (placingTower2 === true) {
@@ -219,6 +221,7 @@ addEventListener("click", (event) => {
       tower.push(newTower);
       cash -= 200;
     } else {
+      console.log("Not enough cash");
       return;
     }
   } else if (placingTower3 === true) {
@@ -247,12 +250,34 @@ addEventListener("click", (event) => {
       cash -= 150;
       tower.push(newTower);
     } else {
+      console.log("Not enough cash");
       return;
     }
   } else {
     return;
   }
+  }
 });
+
+addEventListener("click", (event) => {
+  const x = event.clientX;
+  const y = event.clientY;
+
+  if (x > baneWIDTH)
+    if (y > 0 && y < 200) {
+      placingTower1 = true;
+      placingTower2 = false;
+      placingTower3 = false;
+    } else if (y > 275 && y < 475) {
+      placingTower2 = true;
+      placingTower1 = false;
+      placingTower3 = false;
+    } else if (y > 525 && y < 725) {
+      placingTower3 = true;
+      placingTower1 = false;
+      placingTower2 = false;
+    }
+})
 
 const fiender = [];
 let maksFiender = 5;
