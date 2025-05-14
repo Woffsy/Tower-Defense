@@ -216,91 +216,193 @@ addEventListener("click", (event) => {
   let newTower = null;
 
   if (x < baneWIDTH) {
-    if (placingTower1 === true) {
-      if (cash >= 100) {
-        newTower = {
-          x: x,
-          y: y,
-          radius: 20,
-          farge: "lightblue",
-          rotation: 0,
+    if (tower.length > 0) {
+      for (t of tower) {
+        let dx = t.x - x;
+        let dy = t.y - y;
+        let avstand = Math.sqrt(dx * dx + dy * dy);
+        if (avstand < t.radius) {
+          console.log("Tower already placed here");
+          return;
+        } else {
+          if (placingTower1 === true) {
+            if (cash >= 100) {
+              newTower = {
+                x: x,
+                y: y,
+                radius: 20,
+                farge: "lightblue",
+                rotation: 0,
 
-          attackCooldown: 0,
-          attackSpeed: 1,
-          attackDamage: 2,
-          range: 150,
+                attackCooldown: 0,
+                attackSpeed: 1,
+                attackDamage: 2,
+                range: 150,
 
-          angriper: false,
-          fiendeCor: null,
-          angrepsTid: 0,
-          angrepsTidMax: 15,
+                angriper: false,
+                fiendeCor: null,
+                angrepsTid: 0,
+                angrepsTidMax: 15,
 
-          cashGen: 25,
-        };
-        tower.push(newTower);
-        cash -= 100;
-      } else {
-        console.log("Not enough cash");
-        return;
-      }
-    } else if (placingTower2 === true) {
-      if (cash >= 200) {
-        newTower = {
-          x: x,
-          y: y,
-          radius: 30,
-          farge: "red",
-          rotation: 0,
+                cashGen: 25,
+              };
+              tower.push(newTower);
+              placingTower1 = false;
+              cash -= 100;
+            } else {
+              console.log("Not enough cash");
+              return;
+            }
+          } else if (placingTower2 === true) {
+            if (cash >= 200) {
+              newTower = {
+                x: x,
+                y: y,
+                radius: 30,
+                farge: "red",
+                rotation: 0,
 
-          attackCooldown: 0,
-          attackSpeed: 0.75,
-          attackDamage: 4,
-          range: 350,
+                attackCooldown: 0,
+                attackSpeed: 0.75,
+                attackDamage: 4,
+                range: 350,
 
-          angriper: false,
-          fiendeCor: null,
-          angrepsTid: 0,
-          angrepsTidMax: 15,
+                angriper: false,
+                fiendeCor: null,
+                angrepsTid: 0,
+                angrepsTidMax: 15,
 
-          cashGen: 50,
-        };
-        tower.push(newTower);
-        cash -= 200;
-      } else {
-        console.log("Not enough cash");
-        return;
-      }
-    } else if (placingTower3 === true) {
-      if (cash >= 150) {
-        newTower = {
-          x: x,
-          y: y,
-          radius: 15,
-          farge: "lightgreen",
-          rotation: 0,
+                cashGen: 50,
+              };
+              tower.push(newTower);
+              placingTower2 = false;
+              cash -= 200;
+            } else {
+              console.log("Not enough cash");
+              return;
+            }
+          } else if (placingTower3 === true) {
+            if (cash >= 150) {
+              newTower = {
+                x: x,
+                y: y,
+                radius: 15,
+                farge: "lightgreen",
+                rotation: 0,
 
-          attackCooldown: 0,
-          attackSpeed: 0.25,
-          attackDamage: 1,
-          stun: 2,
-          stunDuration: 60,
-          range: 150,
+                attackCooldown: 0,
+                attackSpeed: 0.25,
+                attackDamage: 1,
+                stun: 2,
+                stunDuration: 60,
+                range: 150,
 
-          angriper: false,
-          fiendeCor: null,
-          angrepsTid: 0,
-          angrepsTidMax: 15,
+                angriper: false,
+                fiendeCor: null,
+                angrepsTid: 0,
+                angrepsTidMax: 15,
 
-          cashGen: 25,
-        };
-        cash -= 150;
-        tower.push(newTower);
-      } else {
-        console.log("Not enough cash");
-        return;
+                cashGen: 25,
+              };
+              cash -= 150;
+              tower.push(newTower);
+              placingTower3 = false;
+            } else {
+              console.log("Not enough cash");
+              return;
+            }
+          } else {
+            return;
+          }
+        }
       }
     } else {
-      return;
+      if (placingTower1 === true) {
+        if (cash >= 100) {
+          newTower = {
+            x: x,
+            y: y,
+            radius: 20,
+            farge: "lightblue",
+            rotation: 0,
+
+            attackCooldown: 0,
+            attackSpeed: 1,
+            attackDamage: 2,
+            range: 150,
+
+            angriper: false,
+            fiendeCor: null,
+            angrepsTid: 0,
+            angrepsTidMax: 15,
+
+            cashGen: 25,
+          };
+          tower.push(newTower);
+          cash -= 100;
+        } else {
+          console.log("Not enough cash");
+          return;
+        }
+      } else if (placingTower2 === true) {
+        if (cash >= 200) {
+          newTower = {
+            x: x,
+            y: y,
+            radius: 30,
+            farge: "red",
+            rotation: 0,
+
+            attackCooldown: 0,
+            attackSpeed: 0.75,
+            attackDamage: 4,
+            range: 350,
+
+            angriper: false,
+            fiendeCor: null,
+            angrepsTid: 0,
+            angrepsTidMax: 15,
+
+            cashGen: 50,
+          };
+          tower.push(newTower);
+          cash -= 200;
+        } else {
+          console.log("Not enough cash");
+          return;
+        }
+      } else if (placingTower3 === true) {
+        if (cash >= 150) {
+          newTower = {
+            x: x,
+            y: y,
+            radius: 15,
+            farge: "lightgreen",
+            rotation: 0,
+
+            attackCooldown: 0,
+            attackSpeed: 0.25,
+            attackDamage: 1,
+            stun: 2,
+            stunDuration: 60,
+            range: 150,
+
+            angriper: false,
+            fiendeCor: null,
+            angrepsTid: 0,
+            angrepsTidMax: 15,
+
+            cashGen: 25,
+          };
+          cash -= 150;
+          tower.push(newTower);
+        } else {
+          console.log("Not enough cash");
+          return;
+        }
+      } else {
+        return;
+      }
     }
   }
 });
