@@ -4,7 +4,7 @@ const canvas = document.querySelector("canvas");
 canvas.height = HEIGHT;
 canvas.width = WIDTH;
 
-const baneWIDTH = WIDTH - 350
+const baneWIDTH = WIDTH - 350;
 
 const frameRate = 60;
 const fpsInterval = 1000 / frameRate;
@@ -39,8 +39,8 @@ function towerView() {
 
 function towerViewTower1() {
   ctx.beginPath();
-  ctx.moveTo(baneWIDTH+25, 0);
-  ctx.rect(baneWIDTH+25, 25, 300, 200);
+  ctx.moveTo(baneWIDTH + 25, 0);
+  ctx.rect(baneWIDTH + 25, 25, 300, 200);
   if (placingTower1 === true) {
     ctx.fillStyle = "lightblue";
   } else if (cash >= 100) {
@@ -62,8 +62,8 @@ function towerViewTower1() {
 }
 function towerViewTower2() {
   ctx.beginPath();
-  ctx.moveTo(baneWIDTH+25, 0);
-  ctx.rect(baneWIDTH+25, 275, 300, 200);
+  ctx.moveTo(baneWIDTH + 25, 0);
+  ctx.rect(baneWIDTH + 25, 275, 300, 200);
   if (placingTower2 === true) {
     ctx.fillStyle = "red";
   } else if (cash >= 200) {
@@ -85,8 +85,8 @@ function towerViewTower2() {
 }
 function towerViewTower3() {
   ctx.beginPath();
-  ctx.moveTo(baneWIDTH+25, 0);
-  ctx.rect(baneWIDTH+25, 525, 300, 200);
+  ctx.moveTo(baneWIDTH + 25, 0);
+  ctx.rect(baneWIDTH + 25, 525, 300, 200);
   if (placingTower3 === true) {
     ctx.fillStyle = "lightgreen";
   } else if (cash >= 150) {
@@ -108,6 +108,52 @@ function towerViewTower3() {
   ctx.restore();
 }
 
+function towerPreview() {
+  canvas.addEventListener("mousemove", (event) => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+  });
+
+  if (placingTower1 === true) {
+    ctx.beginPath();
+    ctx.arc(mouseX, mouseY, 20, 0, Math.PI * 2);
+    ctx.fillStyle = "lightblue";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(mouseX, mouseY);
+    ctx.lineTo(mouseX, mouseY - 20);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    console.log("Placing tower 1");
+  }
+  if (placingTower2 === true) {
+    ctx.beginPath();
+    ctx.arc(mouseX, mouseY, 30, 0, Math.PI * 2);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(mouseX, mouseY);
+    ctx.lineTo(mouseX, mouseY - 30);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    console.log("Placing tower 2");
+  }
+  if (placingTower3 === true) {
+    ctx.beginPath();
+    ctx.arc(mouseX, mouseY, 15, 0, Math.PI * 2);
+    ctx.fillStyle = "lightgreen";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(mouseX, mouseY);
+    ctx.lineTo(mouseX, mouseY - 15);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    console.log("Placing tower 3");
+  }
+}
 
 const tower = [];
 
@@ -170,92 +216,92 @@ addEventListener("click", (event) => {
   let newTower = null;
 
   if (x < baneWIDTH) {
-      if (placingTower1 === true) {
-    if (cash >= 100) {
-      newTower = {
-        x: x,
-        y: y,
-        radius: 20,
-        farge: "lightblue",
-        rotation: 0,
+    if (placingTower1 === true) {
+      if (cash >= 100) {
+        newTower = {
+          x: x,
+          y: y,
+          radius: 20,
+          farge: "lightblue",
+          rotation: 0,
 
-        attackCooldown: 0,
-        attackSpeed: 1,
-        attackDamage: 2,
-        range: 150,
+          attackCooldown: 0,
+          attackSpeed: 1,
+          attackDamage: 2,
+          range: 150,
 
-        angriper: false,
-        fiendeCor: null,
-        angrepsTid: 0,
-        angrepsTidMax: 15,
+          angriper: false,
+          fiendeCor: null,
+          angrepsTid: 0,
+          angrepsTidMax: 15,
 
-        cashGen: 25,
-      };
-      tower.push(newTower);
-      cash -= 100;
+          cashGen: 25,
+        };
+        tower.push(newTower);
+        cash -= 100;
+      } else {
+        console.log("Not enough cash");
+        return;
+      }
+    } else if (placingTower2 === true) {
+      if (cash >= 200) {
+        newTower = {
+          x: x,
+          y: y,
+          radius: 30,
+          farge: "red",
+          rotation: 0,
+
+          attackCooldown: 0,
+          attackSpeed: 0.75,
+          attackDamage: 4,
+          range: 350,
+
+          angriper: false,
+          fiendeCor: null,
+          angrepsTid: 0,
+          angrepsTidMax: 15,
+
+          cashGen: 50,
+        };
+        tower.push(newTower);
+        cash -= 200;
+      } else {
+        console.log("Not enough cash");
+        return;
+      }
+    } else if (placingTower3 === true) {
+      if (cash >= 150) {
+        newTower = {
+          x: x,
+          y: y,
+          radius: 15,
+          farge: "lightgreen",
+          rotation: 0,
+
+          attackCooldown: 0,
+          attackSpeed: 0.25,
+          attackDamage: 1,
+          stun: 2,
+          stunDuration: 60,
+          range: 150,
+
+          angriper: false,
+          fiendeCor: null,
+          angrepsTid: 0,
+          angrepsTidMax: 15,
+
+          cashGen: 25,
+        };
+        cash -= 150;
+        tower.push(newTower);
+      } else {
+        console.log("Not enough cash");
+        return;
+      }
     } else {
-      console.log("Not enough cash");
       return;
     }
-  } else if (placingTower2 === true) {
-    if (cash >= 200) {
-      newTower = {
-        x: x,
-        y: y,
-        radius: 30,
-        farge: "red",
-        rotation: 0,
-
-        attackCooldown: 0,
-        attackSpeed: 0.75,
-        attackDamage: 4,
-        range: 350,
-
-        angriper: false,
-        fiendeCor: null,
-        angrepsTid: 0,
-        angrepsTidMax: 15,
-
-        cashGen: 50,
-      };
-      tower.push(newTower);
-      cash -= 200;
-    } else {
-      console.log("Not enough cash");
-      return;
-    }
-  } else if (placingTower3 === true) {
-    if (cash >= 150) {
-      newTower = {
-        x: x,
-        y: y,
-        radius: 15,
-        farge: "lightgreen",
-        rotation: 0,
-
-        attackCooldown: 0,
-        attackSpeed: 0.25,
-        attackDamage: 1,
-        stun: 2,
-        stunDuration: 60,
-        range: 150,
-
-        angriper: false,
-        fiendeCor: null,
-        angrepsTid: 0,
-        angrepsTidMax: 15,
-
-        cashGen: 25,
-      };
-      cash -= 150;
-      tower.push(newTower);
-    } else {
-      console.log("Not enough cash");
-      return;
-    }
-  } else {
-    return;
-  }
   }
 });
 
@@ -277,7 +323,7 @@ addEventListener("click", (event) => {
       placingTower1 = false;
       placingTower2 = false;
     }
-})
+});
 
 const fiender = [];
 let maksFiender = 5;
@@ -489,10 +535,9 @@ function oppdaterAlt() {
 
   sorterFiendeList(fiender);
 
-  console.log(
-    "Antall fiender: " + fiender.length
-  );
+  console.log("Antall fiender: " + fiender.length);
 
+  towerPreview();
   showCash();
   showLives();
   showWave();
