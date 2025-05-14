@@ -210,201 +210,118 @@ addEventListener("keypress", (event) => {
     }
 });
 
+const TOWER_TYPES = {
+  BassicShooter: {
+    cost: 100,
+    radius: 20,
+    farge: "lightblue",
+    attackSpeed: 1,
+    attackDamage: 2,
+    range: 150,
+    cashGen: 25,
+    angrepsTid: 0,
+    angrepsTidMax: 15,
+  },
+  BasicSniper: {
+    cost: 200,
+    radius: 30,
+    farge: "red",
+    attackSpeed: 0.75,
+    attackDamage: 4,
+    range: 350,
+    cashGen: 50,
+    angrepsTid: 0,
+    angrepsTidMax: 15,
+  },
+  BasicStunner: {
+    cost: 150,
+    radius: 15,
+    farge: "lightgreen",
+    attackSpeed: 0.25,
+    attackDamage: 1,
+    stun: 2, 
+    stunDuration: 60,
+    range: 150,
+    cashGen: 25,
+    angrepsTid: 0,
+    angrepsTidMax: 15,
+  },
+};
+
 addEventListener("click", (event) => {
   const x = event.clientX;
   const y = event.clientY;
-  let newTower = null;
 
-  if (x < baneWIDTH) {
-    if (tower.length > 0) {
-      for (t of tower) {
-        let dx = t.x - x;
-        let dy = t.y - y;
-        let avstand = Math.sqrt(dx * dx + dy * dy);
-        if (avstand < t.radius) {
-          console.log("Tower already placed here");
-          return;
-        } else {
-          if (placingTower1 === true) {
-            if (cash >= 100) {
-              newTower = {
-                x: x,
-                y: y,
-                radius: 20,
-                farge: "lightblue",
-                rotation: 0,
+  let selectedTowerType = null;
+  let placingFlagResetter = null; 
 
-                attackCooldown: 0,
-                attackSpeed: 1,
-                attackDamage: 2,
-                range: 150,
+  if (placingTower1) {
+    selectedTowerType = TOWER_TYPES.BasicShooter;
+  } else if (placingTower2) {
+    selectedTowerType = TOWER_TYPES.BasicSniper;
+  } else if (placingTower3) {
+    selectedTowerType = TOWER_TYPES.BasicStunner;
+  } else {
+    return;
+  }
 
-                angriper: false,
-                fiendeCor: null,
-                angrepsTid: 0,
-                angrepsTidMax: 15,
+  if (x >= baneWIDTH) { 
+    console.log("Cannot place tower outside game area.");
+    return;
+  }
 
-                cashGen: 25,
-              };
-              tower.push(newTower);
-              placingTower1 = false;
-              cash -= 100;
-            } else {
-              console.log("Not enough cash");
-              return;
-            }
-          } else if (placingTower2 === true) {
-            if (cash >= 200) {
-              newTower = {
-                x: x,
-                y: y,
-                radius: 30,
-                farge: "red",
-                rotation: 0,
+  if (cash < selectedTowerType.cost) {
+    console.log("Not enough cash for this tower.");
+    return;
+  }
 
-                attackCooldown: 0,
-                attackSpeed: 0.75,
-                attackDamage: 4,
-                range: 350,
+  const newTowerRadius = selectedTowerType.radius;
 
-                angriper: false,
-                fiendeCor: null,
-                angrepsTid: 0,
-                angrepsTidMax: 15,
+  for (const existingTower of tower) {
+    const dx = existingTower.x - x;
+    const dy = existingTower.y - y;
+    const distanceBetweenCenters = Math.sqrt(dx * dx + dy * dy);
 
-                cashGen: 50,
-              };
-              tower.push(newTower);
-              placingTower2 = false;
-              cash -= 200;
-            } else {
-              console.log("Not enough cash");
-              return;
-            }
-          } else if (placingTower3 === true) {
-            if (cash >= 150) {
-              newTower = {
-                x: x,
-                y: y,
-                radius: 15,
-                farge: "lightgreen",
-                rotation: 0,
-
-                attackCooldown: 0,
-                attackSpeed: 0.25,
-                attackDamage: 1,
-                stun: 2,
-                stunDuration: 60,
-                range: 150,
-
-                angriper: false,
-                fiendeCor: null,
-                angrepsTid: 0,
-                angrepsTidMax: 15,
-
-                cashGen: 25,
-              };
-              cash -= 150;
-              tower.push(newTower);
-              placingTower3 = false;
-            } else {
-              console.log("Not enough cash");
-              return;
-            }
-          } else {
-            return;
-          }
-        }
-      }
-    } else {
-      if (placingTower1 === true) {
-        if (cash >= 100) {
-          newTower = {
-            x: x,
-            y: y,
-            radius: 20,
-            farge: "lightblue",
-            rotation: 0,
-
-            attackCooldown: 0,
-            attackSpeed: 1,
-            attackDamage: 2,
-            range: 150,
-
-            angriper: false,
-            fiendeCor: null,
-            angrepsTid: 0,
-            angrepsTidMax: 15,
-
-            cashGen: 25,
-          };
-          tower.push(newTower);
-          cash -= 100;
-        } else {
-          console.log("Not enough cash");
-          return;
-        }
-      } else if (placingTower2 === true) {
-        if (cash >= 200) {
-          newTower = {
-            x: x,
-            y: y,
-            radius: 30,
-            farge: "red",
-            rotation: 0,
-
-            attackCooldown: 0,
-            attackSpeed: 0.75,
-            attackDamage: 4,
-            range: 350,
-
-            angriper: false,
-            fiendeCor: null,
-            angrepsTid: 0,
-            angrepsTidMax: 15,
-
-            cashGen: 50,
-          };
-          tower.push(newTower);
-          cash -= 200;
-        } else {
-          console.log("Not enough cash");
-          return;
-        }
-      } else if (placingTower3 === true) {
-        if (cash >= 150) {
-          newTower = {
-            x: x,
-            y: y,
-            radius: 15,
-            farge: "lightgreen",
-            rotation: 0,
-
-            attackCooldown: 0,
-            attackSpeed: 0.25,
-            attackDamage: 1,
-            stun: 2,
-            stunDuration: 60,
-            range: 150,
-
-            angriper: false,
-            fiendeCor: null,
-            angrepsTid: 0,
-            angrepsTidMax: 15,
-
-            cashGen: 25,
-          };
-          cash -= 150;
-          tower.push(newTower);
-        } else {
-          console.log("Not enough cash");
-          return;
-        }
-      } else {
-        return;
-      }
+    if (distanceBetweenCenters < existingTower.radius + newTowerRadius) {
+      console.log("Tower placement overlaps with an existing tower.");
+      return; 
     }
   }
+
+  const newTower = {
+    x: x,
+    y: y,
+    radius: newTowerRadius,
+    farge: selectedTowerType.farge,
+    rotation: 0,
+
+    attackCooldown: 0,
+    attackSpeed: selectedTowerType.attackSpeed,
+    attackDamage: selectedTowerType.attackDamage,
+    range: selectedTowerType.range,
+
+    angriper: false,
+    fiendeCor: null,
+    angrepsTid: selectedTowerType.angrepsTid,     //For startverdien til angreps animasjon
+    angrepsTidMax: selectedTowerType.angrepsTidMax, //For tiden til angreps animasjon
+
+    cashGen: selectedTowerType.cashGen,
+  };
+
+  if (selectedTowerType.stun) {
+    newTower.stun = selectedTowerType.stun;
+    newTower.stunDuration = selectedTowerType.stunDuration;
+  }
+
+  tower.push(newTower);
+  cash -= selectedTowerType.cost;
+
+
+  // placingTower1 = false;
+  // placingTower2 = false;
+  // placingTower3 = false;
+
+  console.log("Tower placed successfully!");
 });
 
 addEventListener("click", (event) => {
@@ -434,8 +351,9 @@ let y = 100;
 let radius = 20;
 let farge = "red";
 let hastighet = 1;
+let health = 4;
 
-function lagFiende(x, y, radius, farge, hastighet) {
+function lagFiende(x, y, radius, farge, hastighet, health) {
   return {
     x: x,
     y: y,
@@ -445,7 +363,7 @@ function lagFiende(x, y, radius, farge, hastighet) {
     hastighet: hastighet,
     hastighetX: hastighet,
     hastighetY: 0,
-    health: 6,
+    health: health,
 
     stunned: false,
     stunDuration: 0,
@@ -455,8 +373,12 @@ function genererWave() {
   console.log("Generer ny Wave 1");
   x = -20;
   y = 100;
+  maksFiender += 5;
+  hastighet += 0.5;
+  wave++;
+  health += 2;
   for (i = 0; i < maksFiender; i++) {
-    fiender.push(lagFiende(x, y, radius, farge, hastighet));
+    fiender.push(lagFiende(x, y, radius, farge, hastighet, health));
     x -= 65;
   }
 }
@@ -646,9 +568,6 @@ function oppdaterAlt() {
   towerView();
   if (fiender.length === 0 && lives > 0) {
     console.log("Wave cleared");
-    maksFiender += 5;
-    hastighet += 0.5;
-    wave++;
     genererWave();
   }
 }
