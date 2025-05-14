@@ -41,7 +41,13 @@ function towerViewTower1() {
   ctx.beginPath();
   ctx.moveTo(baneWIDTH+25, 0);
   ctx.rect(baneWIDTH+25, 25, 300, 200);
-  ctx.fillStyle = "lightblue";
+  if (placingTower1 === true) {
+    ctx.fillStyle = "lightblue";
+  } else if (cash >= 100) {
+    ctx.fillStyle = "#eeeeee";
+  } else {
+    ctx.fillStyle = "#cccccc";
+  }
   ctx.fill();
   ctx.save();
   ctx.translate(baneWIDTH + 25, 25);
@@ -51,13 +57,20 @@ function towerViewTower1() {
   ctx.fillText("Damage: 2", 10, 50);
   ctx.fillText("Attack Speed: 1", 10, 75);
   ctx.fillText("Range: 150", 10, 100);
+  ctx.fillText("Cost: 100", 10, 125);
   ctx.restore();
 }
 function towerViewTower2() {
   ctx.beginPath();
   ctx.moveTo(baneWIDTH+25, 0);
   ctx.rect(baneWIDTH+25, 275, 300, 200);
-  ctx.fillStyle = "red";
+  if (placingTower2 === true) {
+    ctx.fillStyle = "red";
+  } else if (cash >= 200) {
+    ctx.fillStyle = "#eeeeee";
+  } else {
+    ctx.fillStyle = "#cccccc";
+  }
   ctx.fill();
   ctx.save();
   ctx.translate(baneWIDTH + 25, 275);
@@ -67,13 +80,20 @@ function towerViewTower2() {
   ctx.fillText("Damage: 4", 10, 50);
   ctx.fillText("Attack Speed: 0.75", 10, 75);
   ctx.fillText("Range: 350", 10, 100);
+  ctx.fillText("Cost: 200", 10, 125);
   ctx.restore();
 }
 function towerViewTower3() {
   ctx.beginPath();
   ctx.moveTo(baneWIDTH+25, 0);
   ctx.rect(baneWIDTH+25, 525, 300, 200);
-  ctx.fillStyle = "lightgreen";
+  if (placingTower3 === true) {
+    ctx.fillStyle = "lightgreen";
+  } else if (cash >= 150) {
+    ctx.fillStyle = "#eeeeee";
+  } else {
+    ctx.fillStyle = "#cccccc";
+  }
   ctx.fill();
   ctx.save();
   ctx.translate(baneWIDTH + 25, 525);
@@ -83,7 +103,8 @@ function towerViewTower3() {
   ctx.fillText("Damage: 1", 10, 50);
   ctx.fillText("Attack Speed: 0.25", 10, 75);
   ctx.fillText("Range: 150", 10, 100);
-  ctx.fillText("Stun: 2", 10, 125);
+  ctx.fillText("Stun: 1", 10, 125);
+  ctx.fillText("Cost: 150", 10, 150);
   ctx.restore();
 }
 
@@ -92,6 +113,7 @@ const tower = [];
 
 let cash = 200;
 let lives = 2;
+let wave = 0;
 
 function showLives() {
   ctx.font = "20px Arial";
@@ -105,6 +127,12 @@ function showCash() {
   ctx.fillText("Cash: " + cash, 10, 20);
 }
 
+function showWave() {
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "black";
+  ctx.fillText("Wave: " + wave, 10, 80);
+}
+
 let placingTower1 = false;
 let placingTower2 = false;
 let placingTower3 = false;
@@ -116,6 +144,7 @@ addEventListener("keypress", (event) => {
     } else {
       placingTower1 = true;
       placingTower2 = false;
+      placingTower3 = false;
     }
   if (event.key === "2")
     if (placingTower2 === true) {
@@ -123,6 +152,7 @@ addEventListener("keypress", (event) => {
     } else {
       placingTower2 = true;
       placingTower1 = false;
+      placingTower3 = false;
     }
   if (event.key === "3")
     if (placingTower3 === true) {
@@ -133,18 +163,6 @@ addEventListener("keypress", (event) => {
       placingTower2 = false;
     }
 });
-
-function showPlacingTower() {
-  ctx.font = "20px Arial";
-  ctx.fillStyle = "black";
-  if (placingTower1 === true) {
-    ctx.fillText("Placing Tower 1", 10, 80);
-  } else if (placingTower2 === true) {
-    ctx.fillText("Placing Tower 2", 10, 80);
-  } else if (placingTower3 === true) {
-    ctx.fillText("Placing Tower 3", 10, 80);
-  }
-}
 
 addEventListener("click", (event) => {
   const x = event.clientX;
@@ -237,12 +255,12 @@ addEventListener("click", (event) => {
 });
 
 const fiender = [];
-let maksFiender = 10;
+let maksFiender = 5;
 let x = -20;
 let y = 100;
 let radius = 20;
 let farge = "red";
-let hastighet = 2;
+let hastighet = 1;
 
 function lagFiende(x, y, radius, farge, hastighet) {
   return {
@@ -311,7 +329,7 @@ function angrep(tower, fiender) {
       fiendeFunnet = true;
       tower.rotation = AttackAngle(tower, fiende);
 
-      if (tower.attackCooldown === 0) {
+      if (tower.attackCooldown <= 0) {
         if (tower.stun) {
           fiende.stunned = true;
           fiende.stunDuration = tower.stunDuration;
@@ -372,10 +390,6 @@ function oppdaterTower(tower, fiender) {
   }
 
   tower.attackCooldown -= 1;
-
-  if (tower.attackCooldown < 0) {
-    tower.attackCooldown = 0;
-  }
 }
 
 function oppdaterFiende(fiende) {
@@ -456,10 +470,13 @@ function oppdaterAlt() {
 
   showCash();
   showLives();
-  showPlacingTower();
+  showWave();
   towerView();
   if (fiender.length === 0 && lives > 0) {
     console.log("Wave cleared");
+    maksFiender += 5;
+    hastighet += 0.5;
+    wave++;
     genererWave();
   }
 }
