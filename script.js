@@ -357,24 +357,95 @@ addEventListener("click", (event) => {
   console.log("Tower placed successfully!");
 });
 
-addEventListener("click", (event) => {
-  const x = event.clientX;
-  const y = event.clientY;
+const uiElements = [
+  {
+      name: "BasicShooter",
+      panelY_Start: 25,  
+      panelY_End: 200,  
+      placeClickY_End: 150,
+      towerPlacingVar: 'placingTower1', 
+      upgradeAction: (towerInstance) => {
+          towerInstance.attackDamage += 1;
+          towerInstance.attackSpeed += 0.25;
+          towerInstance.range += 50;
+          towerInstance.farge = "blue";
+      }
+  },
+  {
+      name: "BasicSniper",
+      panelX_Start: baneWIDTH + 25, 
+      panelWidth: 300,            
+      panelY_Start: 275,
+      panelY_End: 475,    
+      placeClickY_End: 425, 
+      towerPlacingVar: 'placingTower2',
+      upgradeCost: 400,
+      upgradeAction: (towerInstance) => {
+          towerInstance.attackDamage += 2;
+          towerInstance.attackSpeed += 0.25;
+          towerInstance.range += 50;
+          towerInstance.farge = "darkred";
+      }
+  },
+  {
+      name: "BasicStunner",
+      panelY_Start: 525,
+      panelY_End: 725,
+      placeClickY_End: 675,
+      towerPlacingVar: 'placingTower3',
+      upgradeCost: 300,
+      upgradeAction: (towerInstance) => {
+          towerInstance.attackDamage += 1;
+          towerInstance.attackSpeed += 0.25;
+          towerInstance.range += 50;
+          towerInstance.stunDuration += 30;
+          towerInstance.farge = "green";
+      }
+  }
+];
 
-  if (x > baneWIDTH)
-    if (y > 0 && y < 200) {
-      placingTower1 = true;
-      placingTower2 = false;
-      placingTower3 = false;
-    } else if (y > 275 && y < 475) {
-      placingTower2 = true;
-      placingTower1 = false;
-      placingTower3 = false;
-    } else if (y > 525 && y < 725) {
-      placingTower3 = true;
-      placingTower1 = false;
-      placingTower2 = false;
-    }
+
+function setPlacingTowerState(activeTowerVar) {
+
+  window.placingTower1 = (activeTowerVar === 'placingTower1');
+  window.placingTower2 = (activeTowerVar === 'placingTower2');
+  window.placingTower3 = (activeTowerVar === 'placingTower3');
+}
+
+canvas.addEventListener("click", (event) => {
+  const rect = canvas.getBoundingClientRect();
+  const clickX = event.clientX - rect.left;
+  const clickY = event.clientY - rect.top;
+
+  for (const element of uiElements) {
+
+      const elX_Start = element.panelX_Start !== undefined ? element.panelX_Start : baneWIDTH;
+      const elX_End = element.panelX_Start !== undefined ? element.panelX_Start + element.panelWidth : canvas.width; 
+
+      if (
+          clickX > elX_Start && clickX < elX_End &&
+          clickY > element.panelY_Start && clickY < element.panelY_End
+      ) {
+
+          if (clickY < element.placeClickY_End) {
+              setPlacingTowerState(element.towerPlacingVar);
+              console.log(`Selected ${element.name} for placement.`);
+          } else {
+              if (cash >= element.upgradeCost) {
+                  cash -= element.upgradeCost;
+                  for (const t of tower) {
+                      if (t.typeTower === element.name) {
+                          element.upgradeAction(t);
+                      }
+                  }
+                  console.log(`Upgraded ${element.name}. Remaining cash: ${cash}`);
+              } else {
+                  console.log(`Not enough cash to upgrade ${element.name}. Need ${element.upgradeCost}, have ${cash}.`);
+              }
+          }
+          return; 
+      }
+  }
 });
 
 const fiender = [];
