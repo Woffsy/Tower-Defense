@@ -49,15 +49,26 @@ function towerViewTower1() {
     ctx.fillStyle = "#cccccc";
   }
   ctx.fill();
+
   ctx.save();
   ctx.translate(baneWIDTH + 25, 25);
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
-  ctx.fillText("Basic Shooter", 10, 25);
-  ctx.fillText("Damage: 2", 10, 50);
-  ctx.fillText("Attack Speed: 1", 10, 75);
-  ctx.fillText("Range: 150", 10, 100);
-  ctx.fillText("Cost: 100", 10, 125);
+  ctx.fillText("Basic Shooter", 10, 20);
+  ctx.fillText("Damage: 2", 10, 45);
+  ctx.fillText("Attack Speed: 1", 10, 70);
+  ctx.fillText("Range: 150", 10, 95);
+  ctx.fillText("Cost: 100", 10, 120);
+  ctx.beginPath();
+  ctx.rect(0, 150, 300, 50);
+  if (cash >= 200) {
+    ctx.fillStyle = "lightyellow";
+  } else {
+    ctx.fillStyle = "#bbbbbb";
+  }
+  ctx.fill();
+  ctx.fillStyle = "black";
+  ctx.fillText("Upgrade", 100, 180);
   ctx.restore();
 }
 function towerViewTower2() {
@@ -76,11 +87,21 @@ function towerViewTower2() {
   ctx.translate(baneWIDTH + 25, 275);
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
-  ctx.fillText("Sniper", 10, 25);
-  ctx.fillText("Damage: 4", 10, 50);
-  ctx.fillText("Attack Speed: 0.75", 10, 75);
-  ctx.fillText("Range: 350", 10, 100);
-  ctx.fillText("Cost: 200", 10, 125);
+  ctx.fillText("Sniper", 10, 20);
+  ctx.fillText("Damage: 4", 10, 45);
+  ctx.fillText("Attack Speed: 0.75", 10, 70);
+  ctx.fillText("Range: 350", 10, 95);
+  ctx.fillText("Cost: 200", 10, 120);
+  ctx.beginPath();
+  ctx.rect(0, 150, 300, 50);
+  if (cash >= 400) {
+    ctx.fillStyle = "lightyellow";
+  } else {
+    ctx.fillStyle = "#bbbbbb";
+  }
+  ctx.fill();
+  ctx.fillStyle = "black";
+  ctx.fillText("Upgrade", 100, 180);
   ctx.restore();
 }
 function towerViewTower3() {
@@ -99,12 +120,22 @@ function towerViewTower3() {
   ctx.translate(baneWIDTH + 25, 525);
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
-  ctx.fillText("Stunner", 10, 25);
-  ctx.fillText("Damage: 1", 10, 50);
-  ctx.fillText("Attack Speed: 0.25", 10, 75);
-  ctx.fillText("Range: 150", 10, 100);
-  ctx.fillText("Stun: 1", 10, 125);
-  ctx.fillText("Cost: 150", 10, 150);
+  ctx.fillText("Stunner", 10, 20);
+  ctx.fillText("Damage: 1", 10, 45);
+  ctx.fillText("Attack Speed: 0.25", 10, 70);
+  ctx.fillText("Range: 150", 10, 95);
+  ctx.fillText("Stun: 1", 10, 120);
+  ctx.fillText("Cost: 150", 10, 145);
+  ctx.beginPath();
+  ctx.rect(0, 150, 300, 50);
+  if (cash >= 300) {
+    ctx.fillStyle = "lightyellow";
+  } else {
+    ctx.fillStyle = "#bbbbbb";
+  }
+  ctx.fill();
+  ctx.fillStyle = "black";
+  ctx.fillText("Upgrade", 100, 180);
   ctx.restore();
 }
 
@@ -212,6 +243,7 @@ addEventListener("keypress", (event) => {
 
 const TOWER_TYPES = {
   BasicShooter: {
+    name: "BasicShooter",
     cost: 100,
     radius: 20,
     farge: "lightblue",
@@ -223,6 +255,7 @@ const TOWER_TYPES = {
     angrepsTidMax: 15,
   },
   BasicSniper: {
+    name: "BasicSniper",
     cost: 200,
     radius: 30,
     farge: "red",
@@ -234,12 +267,13 @@ const TOWER_TYPES = {
     angrepsTidMax: 15,
   },
   BasicStunner: {
+    name: "BasicStunner",
     cost: 150,
     radius: 15,
     farge: "lightgreen",
     attackSpeed: 0.25,
     attackDamage: 1,
-    stun: 2, 
+    stun: 2,
     stunDuration: 60,
     range: 150,
     cashGen: 25,
@@ -264,7 +298,7 @@ addEventListener("click", (event) => {
     return;
   }
 
-  if (x >= baneWIDTH) { 
+  if (x >= baneWIDTH) {
     console.log("Cannot place tower outside game area.");
     return;
   }
@@ -283,11 +317,12 @@ addEventListener("click", (event) => {
 
     if (distanceBetweenCenters < existingTower.radius + newTowerRadius) {
       console.log("Tower placement overlaps with an existing tower.");
-      return; 
+      return;
     }
   }
 
   const newTower = {
+    typeTower: selectedTowerType.name,
     x: x,
     y: y,
     radius: newTowerRadius,
@@ -301,7 +336,7 @@ addEventListener("click", (event) => {
 
     angriper: false,
     fiendeCor: null,
-    angrepsTid: selectedTowerType.angrepsTid,     //For startverdien til angreps animasjon
+    angrepsTid: selectedTowerType.angrepsTid, //For startverdien til angreps animasjon
     angrepsTidMax: selectedTowerType.angrepsTidMax, //For tiden til angreps animasjon
 
     cashGen: selectedTowerType.cashGen,
@@ -314,7 +349,6 @@ addEventListener("click", (event) => {
 
   tower.push(newTower);
   cash -= selectedTowerType.cost;
-
 
   // placingTower1 = false;
   // placingTower2 = false;
