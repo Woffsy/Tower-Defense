@@ -364,6 +364,7 @@ const uiElements = [
       panelY_End: 200,  
       placeClickY_End: 150,
       towerPlacingVar: 'placingTower1', 
+      upgradeCost: 200,
       upgradeAction: (towerInstance) => {
           towerInstance.attackDamage += 1;
           towerInstance.attackSpeed += 0.25;
