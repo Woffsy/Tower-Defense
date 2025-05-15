@@ -211,7 +211,7 @@ addEventListener("keypress", (event) => {
 });
 
 const TOWER_TYPES = {
-  BassicShooter: {
+  BasicShooter: {
     cost: 100,
     radius: 20,
     farge: "lightblue",
@@ -253,7 +253,6 @@ addEventListener("click", (event) => {
   const y = event.clientY;
 
   let selectedTowerType = null;
-  let placingFlagResetter = null; 
 
   if (placingTower1) {
     selectedTowerType = TOWER_TYPES.BasicShooter;
