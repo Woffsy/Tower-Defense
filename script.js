@@ -11,6 +11,8 @@ const fpsInterval = 1000 / frameRate;
 
 const ctx = canvas.getContext("2d");
 
+const maxUpgradeLevel = 4;
+
 function enemyPath() {
   ctx.strokeStyle = "gray";
   ctx.beginPath();
@@ -55,13 +57,13 @@ function towerViewTower1() {
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
   ctx.fillText("Basic Shooter", 10, 20);
-  ctx.fillText(`Damage: ${TOWER_TYPES.BasicShooter.attackDamage}`, 10, 45);
-  ctx.fillText(`Attack Speed: ${TOWER_TYPES.BasicShooter.attackSpeed}`, 10, 70);
+  ctx.fillText(`Damage: ${TOWER_TYPES.BasicShooter.attackDamage}`, 10, 45); 
+  ctx.fillText(`Attack Speed: ${Math.round(TOWER_TYPES.BasicShooter.attackSpeed*100)/100}`, 10, 70);
   ctx.fillText(`Range: ${TOWER_TYPES.BasicShooter.range}`, 10, 95);
   ctx.fillText(`Cost: ${TOWER_TYPES.BasicShooter.cost}`, 10, 120);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
-  if (cash >= 200) {
+  if (cash >= 200 && TOWER_TYPES.BasicShooter.upgradeLevel < maxUpgradeLevel) {
     ctx.fillStyle = "lightyellow";
   } else {
     ctx.fillStyle = "#bbbbbb";
@@ -89,12 +91,12 @@ function towerViewTower2() {
   ctx.fillStyle = "black";
   ctx.fillText("Sniper", 10, 20);
   ctx.fillText(`Damage: ${TOWER_TYPES.BasicSniper.attackDamage}`, 10, 45);
-  ctx.fillText(`Attack Speed: ${TOWER_TYPES.BasicSniper.attackSpeed}`, 10, 70);
+  ctx.fillText(`Attack Speed: ${Math.round(TOWER_TYPES.BasicSniper.attackSpeed*100)/100}`, 10, 70);
   ctx.fillText(`Range: ${TOWER_TYPES.BasicSniper.range}`, 10, 95);
   ctx.fillText(`Cost: ${TOWER_TYPES.BasicSniper.cost}`, 10, 120);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
-  if (cash >= 400) {
+  if (cash >= 400 && TOWER_TYPES.BasicSniper.upgradeLevel < maxUpgradeLevel) {
     ctx.fillStyle = "lightyellow";
   } else {
     ctx.fillStyle = "#bbbbbb";
@@ -128,7 +130,7 @@ function towerViewTower3() {
   ctx.fillText(`Cost: ${TOWER_TYPES.BasicStunner.cost}`, 10, 145);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
-  if (cash >= 300) {
+  if (cash >= 300 && TOWER_TYPES.BasicStunner.upgradeLevel < maxUpgradeLevel) {
     ctx.fillStyle = "lightyellow";
   } else {
     ctx.fillStyle = "#bbbbbb";
@@ -188,7 +190,7 @@ function towerPreview() {
 
 const tower = [];
 
-let cash = 200;
+let cash = 2000;
 let lives = 2;
 let wave = 0;
 
@@ -253,6 +255,12 @@ const TOWER_TYPES = {
     cashGen: 25,
     angrepsTid: 0,
     angrepsTidMax: 15,
+    upgradeLevel: 0,
+    //Upgrade stats
+    UAttackDamage: 1,
+    UAttackSpeed: 0.25,
+    URange: 15,
+    Ufarge: "blue",
   },
   BasicSniper: {
     name: "BasicSniper",
@@ -265,6 +273,12 @@ const TOWER_TYPES = {
     cashGen: 50,
     angrepsTid: 0,
     angrepsTidMax: 15,
+    upgradeLevel: 0,
+    //Upgrade stats
+    UAttackDamage: 2,
+    UAttackSpeed: 0,
+    URange: 25,
+    Ufarge: "darkred",
   },
   BasicStunner: {
     name: "BasicStunner",
@@ -279,6 +293,13 @@ const TOWER_TYPES = {
     cashGen: 25,
     angrepsTid: 0,
     angrepsTidMax: 15,
+    upgradeLevel: 0,
+    //Upgrade stats
+    UAttackDamage: 0,
+    UAttackSpeed: 0,
+    URange: 10,
+    UStun: 45,
+    Ufarge: "green",
   },
 };
 
@@ -366,10 +387,10 @@ const uiElements = [
       towerPlacingVar: 'placingTower1', 
       upgradeCost: 200,
       upgradeAction: (towerInstance) => {
-          towerInstance.attackDamage += 1;
-          towerInstance.attackSpeed += 0.15;
-          towerInstance.range += 15;
-          towerInstance.farge = "blue";
+          towerInstance.attackDamage += TOWER_TYPES.BasicShooter.UAttackDamage;
+          towerInstance.attackSpeed += TOWER_TYPES.BasicShooter.UAttackSpeed;
+          towerInstance.range += TOWER_TYPES.BasicShooter.URange;
+          towerInstance.farge = TOWER_TYPES.BasicShooter.Ufarge;
       }
   },
   {
@@ -382,10 +403,10 @@ const uiElements = [
       towerPlacingVar: 'placingTower2',
       upgradeCost: 400,
       upgradeAction: (towerInstance) => {
-          towerInstance.attackDamage += 2;
-          towerInstance.attackSpeed += 0.1;
-          towerInstance.range += 25;
-          towerInstance.farge = "darkred";
+          towerInstance.attackDamage += TOWER_TYPES.BasicSniper.UAttackDamage;
+          towerInstance.attackSpeed += TOWER_TYPES.BasicSniper.UAttackSpeed;
+          towerInstance.range += TOWER_TYPES.BasicSniper.URange;
+          towerInstance.farge = TOWER_TYPES.BasicSniper.Ufarge;
       }
   },
   {
@@ -396,11 +417,11 @@ const uiElements = [
       towerPlacingVar: 'placingTower3',
       upgradeCost: 300,
       upgradeAction: (towerInstance) => {
-          towerInstance.attackDamage += 0;
-          towerInstance.attackSpeed += 0;
-          towerInstance.range += 10;
-          towerInstance.stunDuration += 15;
-          towerInstance.farge = "green";
+          towerInstance.attackDamage += TOWER_TYPES.BasicStunner.UAttackDamage;
+          towerInstance.attackSpeed += TOWER_TYPES.BasicStunner.UAttackSpeed;
+          towerInstance.range += TOWER_TYPES.BasicStunner.URange;
+          towerInstance.stunDuration += TOWER_TYPES.BasicStunner.UStun;
+          towerInstance.farge = TOWER_TYPES.BasicStunner.Ufarge;
       }
   }
 ];
@@ -432,29 +453,30 @@ canvas.addEventListener("click", (event) => {
               setPlacingTowerState(element.towerPlacingVar);
               console.log(`Selected ${element.name} for placement.`);
           } else {
-              if (cash >= element.upgradeCost) {
+              if ((cash >= element.upgradeCost) && (TOWER_TYPES[element.name].upgradeLevel < maxUpgradeLevel)){
                   cash -= element.upgradeCost;
+                  TOWER_TYPES[element.name].upgradeLevel++;
                   for (const t of tower) {
                       if (t.typeTower === element.name) {
                           element.upgradeAction(t);
                       }
                   }
                   if (element.name === "BasicShooter") {
-                    TOWER_TYPES.BasicShooter.attackDamage += 1;
-                    TOWER_TYPES.BasicShooter.attackSpeed += 0.15;
-                    TOWER_TYPES.BasicShooter.range += 15;
-                    TOWER_TYPES.BasicShooter.farge = "blue";
+                    TOWER_TYPES.BasicShooter.attackDamage += TOWER_TYPES.BasicShooter.UAttackDamage;
+                    TOWER_TYPES.BasicShooter.attackSpeed += TOWER_TYPES.BasicShooter.UAttackSpeed;
+                    TOWER_TYPES.BasicShooter.range += TOWER_TYPES.BasicShooter.URange;
+                    TOWER_TYPES.BasicShooter.farge = TOWER_TYPES.BasicShooter.Ufarge;
                   } else if (element.name === "BasicSniper") {
-                    TOWER_TYPES.BasicSniper.attackDamage += 2;
-                    TOWER_TYPES.BasicSniper.attackSpeed += 0.1;
-                    TOWER_TYPES.BasicSniper.range += 25;
-                    TOWER_TYPES.BasicSniper.farge = "darkred";
+                    TOWER_TYPES.BasicSniper.attackDamage += TOWER_TYPES.BasicSniper.UAttackDamage;
+                    TOWER_TYPES.BasicSniper.attackSpeed += TOWER_TYPES.BasicSniper.UAttackSpeed;
+                    TOWER_TYPES.BasicSniper.range += TOWER_TYPES.BasicSniper.URange;
+                    TOWER_TYPES.BasicSniper.farge = TOWER_TYPES.BasicSniper.Ufarge;
                   } else if (element.name === "BasicStunner") {
-                    TOWER_TYPES.BasicStunner.attackDamage += 0;
-                    TOWER_TYPES.BasicStunner.attackSpeed += 0;
-                    TOWER_TYPES.BasicStunner.range += 10;
-                    TOWER_TYPES.BasicStunner.stunDuration += 30;
-                    TOWER_TYPES.BasicStunner.farge = "green";
+                    TOWER_TYPES.BasicStunner.attackDamage += TOWER_TYPES.BasicStunner.UAttackDamage;
+                    TOWER_TYPES.BasicStunner.attackSpeed += TOWER_TYPES.BasicStunner.UAttackSpeed;
+                    TOWER_TYPES.BasicStunner.range += TOWER_TYPES.BasicStunner.URange;
+                    TOWER_TYPES.BasicStunner.stunDuration += TOWER_TYPES.BasicStunner.UStun;
+                    TOWER_TYPES.BasicStunner.farge = TOWER_TYPES.BasicStunner.Ufarge;
                   }
                   console.log(`Upgraded ${element.name}. Remaining cash: ${cash}`);
               } else {
