@@ -11,7 +11,7 @@ const ctx = canvas.getContext("2d");
 const frameRate = 60;
 const fpsInterval = 1000 / frameRate;
 
-let cash = 2000;
+let cash = 200;
 let lives = 2;
 let wave = 0;
 
