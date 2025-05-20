@@ -367,8 +367,8 @@ const uiElements = [
       upgradeCost: 200,
       upgradeAction: (towerInstance) => {
           towerInstance.attackDamage += 1;
-          towerInstance.attackSpeed += 0.25;
-          towerInstance.range += 50;
+          towerInstance.attackSpeed += 0.15;
+          towerInstance.range += 15;
           towerInstance.farge = "blue";
       }
   },
@@ -383,8 +383,8 @@ const uiElements = [
       upgradeCost: 400,
       upgradeAction: (towerInstance) => {
           towerInstance.attackDamage += 2;
-          towerInstance.attackSpeed += 0.25;
-          towerInstance.range += 50;
+          towerInstance.attackSpeed += 0.1;
+          towerInstance.range += 25;
           towerInstance.farge = "darkred";
       }
   },
@@ -396,10 +396,10 @@ const uiElements = [
       towerPlacingVar: 'placingTower3',
       upgradeCost: 300,
       upgradeAction: (towerInstance) => {
-          towerInstance.attackDamage += 1;
-          towerInstance.attackSpeed += 0.25;
-          towerInstance.range += 50;
-          towerInstance.stunDuration += 30;
+          towerInstance.attackDamage += 0;
+          towerInstance.attackSpeed += 0;
+          towerInstance.range += 10;
+          towerInstance.stunDuration += 15;
           towerInstance.farge = "green";
       }
   }
@@ -441,13 +441,13 @@ canvas.addEventListener("click", (event) => {
                   }
                   if (element.name === "BasicShooter") {
                     TOWER_TYPES.BasicShooter.attackDamage += 1;
-                    TOWER_TYPES.BasicShooter.attackSpeed += 0.25;
-                    TOWER_TYPES.BasicShooter.range += 50;
+                    TOWER_TYPES.BasicShooter.attackSpeed += 0.15;
+                    TOWER_TYPES.BasicShooter.range += 15;
                     TOWER_TYPES.BasicShooter.farge = "blue";
                   } else if (element.name === "BasicSniper") {
                     TOWER_TYPES.BasicSniper.attackDamage += 2;
-                    TOWER_TYPES.BasicSniper.attackSpeed += 0.25;
-                    TOWER_TYPES.BasicSniper.range += 50;
+                    TOWER_TYPES.BasicSniper.attackSpeed += 0.1;
+                    TOWER_TYPES.BasicSniper.range += 25;
                     TOWER_TYPES.BasicSniper.farge = "darkred";
                   } else if (element.name === "BasicStunner") {
                     TOWER_TYPES.BasicStunner.attackDamage += 0;
