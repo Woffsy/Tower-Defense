@@ -55,10 +55,10 @@ function towerViewTower1() {
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
   ctx.fillText("Basic Shooter", 10, 20);
-  ctx.fillText("Damage: 2", 10, 45);
-  ctx.fillText("Attack Speed: 1", 10, 70);
-  ctx.fillText("Range: 150", 10, 95);
-  ctx.fillText("Cost: 100", 10, 120);
+  ctx.fillText(`Damage: ${TOWER_TYPES.BasicShooter.attackDamage}`, 10, 45);
+  ctx.fillText(`Attack Speed: ${TOWER_TYPES.BasicShooter.attackSpeed}`, 10, 70);
+  ctx.fillText(`Range: ${TOWER_TYPES.BasicShooter.range}`, 10, 95);
+  ctx.fillText(`Cost: ${TOWER_TYPES.BasicShooter.cost}`, 10, 120);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
   if (cash >= 200) {
@@ -68,7 +68,7 @@ function towerViewTower1() {
   }
   ctx.fill();
   ctx.fillStyle = "black";
-  ctx.fillText("Upgrade", 100, 180);
+  ctx.fillText("Upgrade: 200", 80, 180);
   ctx.restore();
 }
 function towerViewTower2() {
@@ -88,10 +88,10 @@ function towerViewTower2() {
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
   ctx.fillText("Sniper", 10, 20);
-  ctx.fillText("Damage: 4", 10, 45);
-  ctx.fillText("Attack Speed: 0.75", 10, 70);
-  ctx.fillText("Range: 350", 10, 95);
-  ctx.fillText("Cost: 200", 10, 120);
+  ctx.fillText(`Damage: ${TOWER_TYPES.BasicSniper.attackDamage}`, 10, 45);
+  ctx.fillText(`Attack Speed: ${TOWER_TYPES.BasicSniper.attackSpeed}`, 10, 70);
+  ctx.fillText(`Range: ${TOWER_TYPES.BasicSniper.range}`, 10, 95);
+  ctx.fillText(`Cost: ${TOWER_TYPES.BasicSniper.cost}`, 10, 120);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
   if (cash >= 400) {
@@ -101,7 +101,7 @@ function towerViewTower2() {
   }
   ctx.fill();
   ctx.fillStyle = "black";
-  ctx.fillText("Upgrade", 100, 180);
+  ctx.fillText("Upgrade: 400", 80, 180);
   ctx.restore();
 }
 function towerViewTower3() {
@@ -121,11 +121,11 @@ function towerViewTower3() {
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
   ctx.fillText("Stunner", 10, 20);
-  ctx.fillText("Damage: 1", 10, 45);
-  ctx.fillText("Attack Speed: 0.25", 10, 70);
-  ctx.fillText("Range: 150", 10, 95);
-  ctx.fillText("Stun: 1", 10, 120);
-  ctx.fillText("Cost: 150", 10, 145);
+  ctx.fillText(`Damage: ${TOWER_TYPES.BasicStunner.attackDamage}`, 10, 45);
+  ctx.fillText(`Attack Speed: ${TOWER_TYPES.BasicStunner.attackSpeed}`, 10, 70);
+  ctx.fillText(`Range: ${TOWER_TYPES.BasicStunner.range}`, 10, 95);
+  ctx.fillText(`Stun: ${TOWER_TYPES.BasicStunner.stunDuration/frameRate}`, 10, 120);
+  ctx.fillText(`Cost: ${TOWER_TYPES.BasicStunner.cost}`, 10, 145);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
   if (cash >= 300) {
@@ -135,7 +135,7 @@ function towerViewTower3() {
   }
   ctx.fill();
   ctx.fillStyle = "black";
-  ctx.fillText("Upgrade", 100, 180);
+  ctx.fillText(`Upgrade: 300`, 80, 180);
   ctx.restore();
 }
 
@@ -438,6 +438,23 @@ canvas.addEventListener("click", (event) => {
                       if (t.typeTower === element.name) {
                           element.upgradeAction(t);
                       }
+                  }
+                  if (element.name === "BasicShooter") {
+                    TOWER_TYPES.BasicShooter.attackDamage += 1;
+                    TOWER_TYPES.BasicShooter.attackSpeed += 0.25;
+                    TOWER_TYPES.BasicShooter.range += 50;
+                    TOWER_TYPES.BasicShooter.farge = "blue";
+                  } else if (element.name === "BasicSniper") {
+                    TOWER_TYPES.BasicSniper.attackDamage += 2;
+                    TOWER_TYPES.BasicSniper.attackSpeed += 0.25;
+                    TOWER_TYPES.BasicSniper.range += 50;
+                    TOWER_TYPES.BasicSniper.farge = "darkred";
+                  } else if (element.name === "BasicStunner") {
+                    TOWER_TYPES.BasicStunner.attackDamage += 0;
+                    TOWER_TYPES.BasicStunner.attackSpeed += 0;
+                    TOWER_TYPES.BasicStunner.range += 10;
+                    TOWER_TYPES.BasicStunner.stunDuration += 30;
+                    TOWER_TYPES.BasicStunner.farge = "green";
                   }
                   console.log(`Upgraded ${element.name}. Remaining cash: ${cash}`);
               } else {
