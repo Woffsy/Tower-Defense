@@ -6,12 +6,30 @@ canvas.width = WIDTH;
 
 const baneWIDTH = WIDTH - 350;
 
+const ctx = canvas.getContext("2d");
+
 const frameRate = 60;
 const fpsInterval = 1000 / frameRate;
 
-const ctx = canvas.getContext("2d");
+let cash = 2000;
+let lives = 2;
+let wave = 0;
 
+const tower = [];
 const maxUpgradeLevel = 4;
+
+let placingTower1 = false;
+let placingTower2 = false;
+let placingTower3 = false;
+
+const fiender = [];
+let maksFiender = 5;
+let x = -20;
+let y = 100;
+let radius = 20;
+let farge = "red";
+let hastighet = 1;
+let health = 4;
 
 function enemyPath() {
   ctx.strokeStyle = "gray";
@@ -188,12 +206,6 @@ function towerPreview() {
   }
 }
 
-const tower = [];
-
-let cash = 2000;
-let lives = 2;
-let wave = 0;
-
 function showLives() {
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
@@ -211,10 +223,6 @@ function showWave() {
   ctx.fillStyle = "black";
   ctx.fillText("Wave: " + wave, 10, 80);
 }
-
-let placingTower1 = false;
-let placingTower2 = false;
-let placingTower3 = false;
 
 addEventListener("keypress", (event) => {
   if (event.key === "1")
@@ -487,15 +495,6 @@ canvas.addEventListener("click", (event) => {
       }
   }
 });
-
-const fiender = [];
-let maksFiender = 5;
-let x = -20;
-let y = 100;
-let radius = 20;
-let farge = "red";
-let hastighet = 1;
-let health = 4;
 
 function lagFiende(x, y, radius, farge, hastighet, health) {
   return {
