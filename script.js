@@ -74,7 +74,7 @@ function towerViewTower1() {
   ctx.translate(baneWIDTH + 25, 25);
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
-  ctx.fillText("Basic Shooter", 10, 20);
+  ctx.fillText("Shooter", 10, 20);
   ctx.fillText(`Damage: ${TOWER_TYPES.BasicShooter.attackDamage}`, 10, 45); 
   ctx.fillText(`Attack Speed: ${Math.round(TOWER_TYPES.BasicShooter.attackSpeed*100)/100}`, 10, 70);
   ctx.fillText(`Range: ${TOWER_TYPES.BasicShooter.range}`, 10, 95);
