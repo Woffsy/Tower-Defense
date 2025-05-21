@@ -16,7 +16,7 @@ let lives = 2;
 let wave = 0;
 
 const tower = [];
-const maxUpgradeLevel = 4;
+const maxUpgradeLevel = 1000;
 
 let placingTower1 = false;
 let placingTower2 = false;
@@ -81,14 +81,14 @@ function towerViewTower1() {
   ctx.fillText(`Cost: ${TOWER_TYPES.BasicShooter.cost}`, 10, 120);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
-  if (cash >= 200 && TOWER_TYPES.BasicShooter.upgradeLevel < maxUpgradeLevel) {
+  if (cash >= uiElements[0].upgradeCost && TOWER_TYPES.BasicShooter.upgradeLevel < maxUpgradeLevel) {
     ctx.fillStyle = "lightyellow";
   } else {
     ctx.fillStyle = "#bbbbbb";
   }
   ctx.fill();
   ctx.fillStyle = "black";
-  ctx.fillText("Upgrade: 200", 80, 180);
+  ctx.fillText(`Upgrade: ${uiElements[0].upgradeCost}`, 80, 180);
   ctx.restore();
 }
 function towerViewTower2() {
@@ -114,14 +114,14 @@ function towerViewTower2() {
   ctx.fillText(`Cost: ${TOWER_TYPES.BasicSniper.cost}`, 10, 120);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
-  if (cash >= 400 && TOWER_TYPES.BasicSniper.upgradeLevel < maxUpgradeLevel) {
+  if (cash >= uiElements[1].upgradeCost && TOWER_TYPES.BasicSniper.upgradeLevel < maxUpgradeLevel) {
     ctx.fillStyle = "lightyellow";
   } else {
     ctx.fillStyle = "#bbbbbb";
   }
   ctx.fill();
   ctx.fillStyle = "black";
-  ctx.fillText("Upgrade: 400", 80, 180);
+  ctx.fillText(`Upgrade: ${uiElements[1].upgradeCost}`, 80, 180);
   ctx.restore();
 }
 function towerViewTower3() {
@@ -148,14 +148,14 @@ function towerViewTower3() {
   ctx.fillText(`Cost: ${TOWER_TYPES.BasicStunner.cost}`, 10, 145);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
-  if (cash >= 300 && TOWER_TYPES.BasicStunner.upgradeLevel < maxUpgradeLevel) {
+  if (cash >= uiElements[2].upgradeCost && TOWER_TYPES.BasicStunner.upgradeLevel < maxUpgradeLevel) {
     ctx.fillStyle = "lightyellow";
   } else {
     ctx.fillStyle = "#bbbbbb";
   }
   ctx.fill();
   ctx.fillStyle = "black";
-  ctx.fillText(`Upgrade: 300`, 80, 180);
+  ctx.fillText(`Upgrade: ${uiElements[2].upgradeCost}`, 80, 180);
   ctx.restore();
 }
 
@@ -464,6 +464,7 @@ canvas.addEventListener("click", (event) => {
               if ((cash >= element.upgradeCost) && (TOWER_TYPES[element.name].upgradeLevel < maxUpgradeLevel)){
                   cash -= element.upgradeCost;
                   TOWER_TYPES[element.name].upgradeLevel++;
+                  element.upgradeCost *= 2;
                   for (const t of tower) {
                       if (t.typeTower === element.name) {
                           element.upgradeAction(t);
@@ -513,17 +514,17 @@ function lagFiende(x, y, radius, farge, hastighet, health) {
   };
 }
 function genererWave() {
-  console.log("Generer ny Wave 1");
+  console.log("Generer ny Wave");
+  for (i = 0; i < maksFiender; i++) {
+    fiender.push(lagFiende(x, y, radius, farge, hastighet, health));
+    x -= 65;
+  }
   x = -20;
   y = 100;
   maksFiender += 5;
   hastighet += 0.5;
   wave++;
   health += 2;
-  for (i = 0; i < maksFiender; i++) {
-    fiender.push(lagFiende(x, y, radius, farge, hastighet, health));
-    x -= 65;
-  }
 }
 
 function tegnFiende(fiende) {
