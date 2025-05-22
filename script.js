@@ -244,7 +244,6 @@ addEventListener("click", (event) => {
         t.y + t.radius > y
       ) {
         console.log("Clicked on tower");
-        // t.rangePreviewTime = t.rangePreviewMax;
         if (t.rangePreview === true){
           t.rangePreview = false;
         } else {
@@ -261,10 +260,6 @@ function towerPreviewRange() {
       ctx.arc(t.x, t.y, t.range+t.radius, 0, Math.PI * 2);
       ctx.fillStyle = "#aaaaaa50";
       ctx.fill();
-      t.rangePreviewTime--;
-      if (t.rangePreviewTime <= 0) {
-        t.rangePreview = false;
-      }
     }
   }
 }
@@ -333,8 +328,6 @@ const TOWER_TYPES = {
     URange: 15,
     Ufarge: "blue",
     //Range Preview
-    rangePreviewTime: 0,
-    rangePreviewMax: 60,
     rangePreview: false,
   },
   BasicSniper: {
@@ -355,8 +348,6 @@ const TOWER_TYPES = {
     URange: 25,
     Ufarge: "darkred",
     //Range Preview
-    rangePreviewTime: 0,
-    rangePreviewMax: 60,
     rangePreview: false,
   },
   BasicStunner: {
@@ -380,8 +371,6 @@ const TOWER_TYPES = {
     UStun: 45,
     Ufarge: "green",
     //Range Preview
-    rangePreviewTime: 0,
-    rangePreviewMax: 60,
     rangePreview: false,
   },
 };
