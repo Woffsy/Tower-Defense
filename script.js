@@ -75,13 +75,22 @@ function towerViewTower1() {
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
   ctx.fillText("Shooter", 10, 20);
-  ctx.fillText(`Damage: ${TOWER_TYPES.BasicShooter.attackDamage}`, 10, 45); 
-  ctx.fillText(`Attack Speed: ${Math.round(TOWER_TYPES.BasicShooter.attackSpeed*100)/100}`, 10, 70);
+  ctx.fillText(`Damage: ${TOWER_TYPES.BasicShooter.attackDamage}`, 10, 45);
+  ctx.fillText(
+    `Attack Speed: ${
+      Math.round(TOWER_TYPES.BasicShooter.attackSpeed * 100) / 100
+    }`,
+    10,
+    70
+  );
   ctx.fillText(`Range: ${TOWER_TYPES.BasicShooter.range}`, 10, 95);
   ctx.fillText(`Cost: ${TOWER_TYPES.BasicShooter.cost}`, 10, 120);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
-  if (cash >= uiElements[0].upgradeCost && TOWER_TYPES.BasicShooter.upgradeLevel < maxUpgradeLevel) {
+  if (
+    cash >= uiElements[0].upgradeCost &&
+    TOWER_TYPES.BasicShooter.upgradeLevel < maxUpgradeLevel
+  ) {
     ctx.fillStyle = "lightyellow";
   } else {
     ctx.fillStyle = "#bbbbbb";
@@ -109,12 +118,21 @@ function towerViewTower2() {
   ctx.fillStyle = "black";
   ctx.fillText("Sniper", 10, 20);
   ctx.fillText(`Damage: ${TOWER_TYPES.BasicSniper.attackDamage}`, 10, 45);
-  ctx.fillText(`Attack Speed: ${Math.round(TOWER_TYPES.BasicSniper.attackSpeed*100)/100}`, 10, 70);
+  ctx.fillText(
+    `Attack Speed: ${
+      Math.round(TOWER_TYPES.BasicSniper.attackSpeed * 100) / 100
+    }`,
+    10,
+    70
+  );
   ctx.fillText(`Range: ${TOWER_TYPES.BasicSniper.range}`, 10, 95);
   ctx.fillText(`Cost: ${TOWER_TYPES.BasicSniper.cost}`, 10, 120);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
-  if (cash >= uiElements[1].upgradeCost && TOWER_TYPES.BasicSniper.upgradeLevel < maxUpgradeLevel) {
+  if (
+    cash >= uiElements[1].upgradeCost &&
+    TOWER_TYPES.BasicSniper.upgradeLevel < maxUpgradeLevel
+  ) {
     ctx.fillStyle = "lightyellow";
   } else {
     ctx.fillStyle = "#bbbbbb";
@@ -144,11 +162,18 @@ function towerViewTower3() {
   ctx.fillText(`Damage: ${TOWER_TYPES.BasicStunner.attackDamage}`, 10, 45);
   ctx.fillText(`Attack Speed: ${TOWER_TYPES.BasicStunner.attackSpeed}`, 10, 70);
   ctx.fillText(`Range: ${TOWER_TYPES.BasicStunner.range}`, 10, 95);
-  ctx.fillText(`Stun: ${TOWER_TYPES.BasicStunner.stunDuration/frameRate}`, 10, 120);
+  ctx.fillText(
+    `Stun: ${TOWER_TYPES.BasicStunner.stunDuration / frameRate}`,
+    10,
+    120
+  );
   ctx.fillText(`Cost: ${TOWER_TYPES.BasicStunner.cost}`, 10, 145);
   ctx.beginPath();
   ctx.rect(0, 150, 300, 50);
-  if (cash >= uiElements[2].upgradeCost && TOWER_TYPES.BasicStunner.upgradeLevel < maxUpgradeLevel) {
+  if (
+    cash >= uiElements[2].upgradeCost &&
+    TOWER_TYPES.BasicStunner.upgradeLevel < maxUpgradeLevel
+  ) {
     ctx.fillStyle = "lightyellow";
   } else {
     ctx.fillStyle = "#bbbbbb";
@@ -203,6 +228,44 @@ function towerPreview() {
     ctx.lineWidth = 4;
     ctx.stroke();
     console.log("Placing tower 3");
+  }
+}
+
+addEventListener("click", (event) => {
+  const x = event.clientX;
+  const y = event.clientY;
+
+  if (x <= baneWIDTH) {
+    for (t of tower)
+      if (
+        t.x - t.radius < x &&
+        t.x + t.radius > x &&
+        t.y - t.radius < y &&
+        t.y + t.radius > y
+      ) {
+        console.log("Clicked on tower");
+        // t.rangePreviewTime = t.rangePreviewMax;
+        if (t.rangePreview === false){
+          t.rangePreview = true;
+        } else {
+          t.rangePreview = false;
+        }
+      }
+  }
+});
+
+function towerPreviewRange() {
+  for (const t of tower) {
+    if (t.rangePreview === true) {
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, t.range+t.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "#aaaaaa50";
+      ctx.fill();
+      t.rangePreviewTime--;
+      if (t.rangePreviewTime <= 0) {
+        t.rangePreview = false;
+      }
+    }
   }
 }
 
@@ -269,6 +332,10 @@ const TOWER_TYPES = {
     UAttackSpeed: 0.25,
     URange: 15,
     Ufarge: "blue",
+    //Range Preview
+    rangePreviewTime: 0,
+    rangePreviewMax: 60,
+    rangePreview: false,
   },
   BasicSniper: {
     name: "BasicSniper",
@@ -287,6 +354,10 @@ const TOWER_TYPES = {
     UAttackSpeed: 0,
     URange: 25,
     Ufarge: "darkred",
+    //Range Preview
+    rangePreviewTime: 0,
+    rangePreviewMax: 60,
+    rangePreview: false,
   },
   BasicStunner: {
     name: "BasicStunner",
@@ -308,6 +379,10 @@ const TOWER_TYPES = {
     URange: 10,
     UStun: 45,
     Ufarge: "green",
+    //Range Preview
+    rangePreviewTime: 0,
+    rangePreviewMax: 60,
+    rangePreview: false,
   },
 };
 
@@ -388,58 +463,56 @@ addEventListener("click", (event) => {
 
 const uiElements = [
   {
-      name: "BasicShooter",
-      panelY_Start: 25,  
-      panelY_End: 200,  
-      placeClickY_End: 150,
-      towerPlacingVar: 'placingTower1', 
-      upgradeCost: 200,
-      upgradeAction: (towerInstance) => {
-          towerInstance.attackDamage += TOWER_TYPES.BasicShooter.UAttackDamage;
-          towerInstance.attackSpeed += TOWER_TYPES.BasicShooter.UAttackSpeed;
-          towerInstance.range += TOWER_TYPES.BasicShooter.URange;
-          towerInstance.farge = TOWER_TYPES.BasicShooter.Ufarge;
-      }
+    name: "BasicShooter",
+    panelY_Start: 25,
+    panelY_End: 200,
+    placeClickY_End: 150,
+    towerPlacingVar: "placingTower1",
+    upgradeCost: 200,
+    upgradeAction: (towerInstance) => {
+      towerInstance.attackDamage += TOWER_TYPES.BasicShooter.UAttackDamage;
+      towerInstance.attackSpeed += TOWER_TYPES.BasicShooter.UAttackSpeed;
+      towerInstance.range += TOWER_TYPES.BasicShooter.URange;
+      towerInstance.farge = TOWER_TYPES.BasicShooter.Ufarge;
+    },
   },
   {
-      name: "BasicSniper",
-      panelX_Start: baneWIDTH + 25, 
-      panelWidth: 300,            
-      panelY_Start: 275,
-      panelY_End: 475,    
-      placeClickY_End: 425, 
-      towerPlacingVar: 'placingTower2',
-      upgradeCost: 400,
-      upgradeAction: (towerInstance) => {
-          towerInstance.attackDamage += TOWER_TYPES.BasicSniper.UAttackDamage;
-          towerInstance.attackSpeed += TOWER_TYPES.BasicSniper.UAttackSpeed;
-          towerInstance.range += TOWER_TYPES.BasicSniper.URange;
-          towerInstance.farge = TOWER_TYPES.BasicSniper.Ufarge;
-      }
+    name: "BasicSniper",
+    panelX_Start: baneWIDTH + 25,
+    panelWidth: 300,
+    panelY_Start: 275,
+    panelY_End: 475,
+    placeClickY_End: 425,
+    towerPlacingVar: "placingTower2",
+    upgradeCost: 400,
+    upgradeAction: (towerInstance) => {
+      towerInstance.attackDamage += TOWER_TYPES.BasicSniper.UAttackDamage;
+      towerInstance.attackSpeed += TOWER_TYPES.BasicSniper.UAttackSpeed;
+      towerInstance.range += TOWER_TYPES.BasicSniper.URange;
+      towerInstance.farge = TOWER_TYPES.BasicSniper.Ufarge;
+    },
   },
   {
-      name: "BasicStunner",
-      panelY_Start: 525,
-      panelY_End: 725,
-      placeClickY_End: 675,
-      towerPlacingVar: 'placingTower3',
-      upgradeCost: 300,
-      upgradeAction: (towerInstance) => {
-          towerInstance.attackDamage += TOWER_TYPES.BasicStunner.UAttackDamage;
-          towerInstance.attackSpeed += TOWER_TYPES.BasicStunner.UAttackSpeed;
-          towerInstance.range += TOWER_TYPES.BasicStunner.URange;
-          towerInstance.stunDuration += TOWER_TYPES.BasicStunner.UStun;
-          towerInstance.farge = TOWER_TYPES.BasicStunner.Ufarge;
-      }
-  }
+    name: "BasicStunner",
+    panelY_Start: 525,
+    panelY_End: 725,
+    placeClickY_End: 675,
+    towerPlacingVar: "placingTower3",
+    upgradeCost: 300,
+    upgradeAction: (towerInstance) => {
+      towerInstance.attackDamage += TOWER_TYPES.BasicStunner.UAttackDamage;
+      towerInstance.attackSpeed += TOWER_TYPES.BasicStunner.UAttackSpeed;
+      towerInstance.range += TOWER_TYPES.BasicStunner.URange;
+      towerInstance.stunDuration += TOWER_TYPES.BasicStunner.UStun;
+      towerInstance.farge = TOWER_TYPES.BasicStunner.Ufarge;
+    },
+  },
 ];
 
-
 function setPlacingTowerState(activeTowerVar) {
-
-  window.placingTower1 = (activeTowerVar === 'placingTower1');
-  window.placingTower2 = (activeTowerVar === 'placingTower2');
-  window.placingTower3 = (activeTowerVar === 'placingTower3');
+  window.placingTower1 = activeTowerVar === "placingTower1";
+  window.placingTower2 = activeTowerVar === "placingTower2";
+  window.placingTower3 = activeTowerVar === "placingTower3";
 }
 
 canvas.addEventListener("click", (event) => {
@@ -448,52 +521,68 @@ canvas.addEventListener("click", (event) => {
   const clickY = event.clientY - rect.top;
 
   for (const element of uiElements) {
+    const elX_Start =
+      element.panelX_Start !== undefined ? element.panelX_Start : baneWIDTH;
+    const elX_End =
+      element.panelX_Start !== undefined
+        ? element.panelX_Start + element.panelWidth
+        : canvas.width;
 
-      const elX_Start = element.panelX_Start !== undefined ? element.panelX_Start : baneWIDTH;
-      const elX_End = element.panelX_Start !== undefined ? element.panelX_Start + element.panelWidth : canvas.width; 
-
-      if (
-          clickX > elX_Start && clickX < elX_End &&
-          clickY > element.panelY_Start && clickY < element.panelY_End
-      ) {
-
-          if (clickY < element.placeClickY_End) {
-              setPlacingTowerState(element.towerPlacingVar);
-              console.log(`Selected ${element.name} for placement.`);
-          } else {
-              if ((cash >= element.upgradeCost) && (TOWER_TYPES[element.name].upgradeLevel < maxUpgradeLevel)){
-                  cash -= element.upgradeCost;
-                  TOWER_TYPES[element.name].upgradeLevel++;
-                  element.upgradeCost *= 2;
-                  for (const t of tower) {
-                      if (t.typeTower === element.name) {
-                          element.upgradeAction(t);
-                      }
-                  }
-                  if (element.name === "BasicShooter") {
-                    TOWER_TYPES.BasicShooter.attackDamage += TOWER_TYPES.BasicShooter.UAttackDamage;
-                    TOWER_TYPES.BasicShooter.attackSpeed += TOWER_TYPES.BasicShooter.UAttackSpeed;
-                    TOWER_TYPES.BasicShooter.range += TOWER_TYPES.BasicShooter.URange;
-                    TOWER_TYPES.BasicShooter.farge = TOWER_TYPES.BasicShooter.Ufarge;
-                  } else if (element.name === "BasicSniper") {
-                    TOWER_TYPES.BasicSniper.attackDamage += TOWER_TYPES.BasicSniper.UAttackDamage;
-                    TOWER_TYPES.BasicSniper.attackSpeed += TOWER_TYPES.BasicSniper.UAttackSpeed;
-                    TOWER_TYPES.BasicSniper.range += TOWER_TYPES.BasicSniper.URange;
-                    TOWER_TYPES.BasicSniper.farge = TOWER_TYPES.BasicSniper.Ufarge;
-                  } else if (element.name === "BasicStunner") {
-                    TOWER_TYPES.BasicStunner.attackDamage += TOWER_TYPES.BasicStunner.UAttackDamage;
-                    TOWER_TYPES.BasicStunner.attackSpeed += TOWER_TYPES.BasicStunner.UAttackSpeed;
-                    TOWER_TYPES.BasicStunner.range += TOWER_TYPES.BasicStunner.URange;
-                    TOWER_TYPES.BasicStunner.stunDuration += TOWER_TYPES.BasicStunner.UStun;
-                    TOWER_TYPES.BasicStunner.farge = TOWER_TYPES.BasicStunner.Ufarge;
-                  }
-                  console.log(`Upgraded ${element.name}. Remaining cash: ${cash}`);
-              } else {
-                  console.log(`Not enough cash to upgrade ${element.name}. Need ${element.upgradeCost}, have ${cash}.`);
-              }
+    if (
+      clickX > elX_Start &&
+      clickX < elX_End &&
+      clickY > element.panelY_Start &&
+      clickY < element.panelY_End
+    ) {
+      if (clickY < element.placeClickY_End) {
+        setPlacingTowerState(element.towerPlacingVar);
+        console.log(`Selected ${element.name} for placement.`);
+      } else {
+        if (
+          cash >= element.upgradeCost &&
+          TOWER_TYPES[element.name].upgradeLevel < maxUpgradeLevel
+        ) {
+          cash -= element.upgradeCost;
+          TOWER_TYPES[element.name].upgradeLevel++;
+          element.upgradeCost *= 2;
+          for (const t of tower) {
+            if (t.typeTower === element.name) {
+              element.upgradeAction(t);
+            }
           }
-          return; 
+          if (element.name === "BasicShooter") {
+            TOWER_TYPES.BasicShooter.attackDamage +=
+              TOWER_TYPES.BasicShooter.UAttackDamage;
+            TOWER_TYPES.BasicShooter.attackSpeed +=
+              TOWER_TYPES.BasicShooter.UAttackSpeed;
+            TOWER_TYPES.BasicShooter.range += TOWER_TYPES.BasicShooter.URange;
+            TOWER_TYPES.BasicShooter.farge = TOWER_TYPES.BasicShooter.Ufarge;
+          } else if (element.name === "BasicSniper") {
+            TOWER_TYPES.BasicSniper.attackDamage +=
+              TOWER_TYPES.BasicSniper.UAttackDamage;
+            TOWER_TYPES.BasicSniper.attackSpeed +=
+              TOWER_TYPES.BasicSniper.UAttackSpeed;
+            TOWER_TYPES.BasicSniper.range += TOWER_TYPES.BasicSniper.URange;
+            TOWER_TYPES.BasicSniper.farge = TOWER_TYPES.BasicSniper.Ufarge;
+          } else if (element.name === "BasicStunner") {
+            TOWER_TYPES.BasicStunner.attackDamage +=
+              TOWER_TYPES.BasicStunner.UAttackDamage;
+            TOWER_TYPES.BasicStunner.attackSpeed +=
+              TOWER_TYPES.BasicStunner.UAttackSpeed;
+            TOWER_TYPES.BasicStunner.range += TOWER_TYPES.BasicStunner.URange;
+            TOWER_TYPES.BasicStunner.stunDuration +=
+              TOWER_TYPES.BasicStunner.UStun;
+            TOWER_TYPES.BasicStunner.farge = TOWER_TYPES.BasicStunner.Ufarge;
+          }
+          console.log(`Upgraded ${element.name}. Remaining cash: ${cash}`);
+        } else {
+          console.log(
+            `Not enough cash to upgrade ${element.name}. Need ${element.upgradeCost}, have ${cash}.`
+          );
+        }
       }
+      return;
+    }
   }
 });
 
@@ -710,6 +799,7 @@ function oppdaterAlt() {
   showLives();
   showWave();
   towerView();
+  towerPreviewRange();
   if (fiender.length === 0 && lives > 0) {
     console.log("Wave cleared");
     genererWave();
