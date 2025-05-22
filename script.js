@@ -245,10 +245,10 @@ addEventListener("click", (event) => {
       ) {
         console.log("Clicked on tower");
         // t.rangePreviewTime = t.rangePreviewMax;
-        if (t.rangePreview === false){
-          t.rangePreview = true;
-        } else {
+        if (t.rangePreview === true){
           t.rangePreview = false;
+        } else {
+          t.rangePreview = true;
         }
       }
   }
