@@ -15,6 +15,8 @@ let cash = 200;
 let lives = 2;
 let wave = 0;
 
+let gameIsRunning = false;
+
 const tower = [];
 const maxUpgradeLevel = 1000;
 
@@ -24,12 +26,19 @@ let placingTower3 = false;
 
 const fiender = [];
 let maksFiender = 5;
-let x = -20;
+let x = -64;
 let y = 100;
 let radius = 20;
 let farge = "red";
 let hastighet = 1;
-let health = 4;
+let startHealth = 4;
+
+const fiendeSpriteSRC = "media/fiende.png";
+const fiendeWidth = 128;
+const fiendeHeight = 128;
+
+let fiendeSprite = null;
+let fiendeSpriteLoaded = false;
 
 function enemyPath() {
   ctx.strokeStyle = "gray";
@@ -234,7 +243,9 @@ function towerPreview() {
 addEventListener("click", (event) => {
   const x = event.clientX;
   const y = event.clientY;
-
+  for (const t of tower) {
+    t.rangePreview = false;
+  }
   if (x <= baneWIDTH) {
     for (t of tower)
       if (
@@ -244,7 +255,7 @@ addEventListener("click", (event) => {
         t.y + t.radius > y
       ) {
         console.log("Clicked on tower");
-        if (t.rangePreview === true){
+        if (t.rangePreview === true) {
           t.rangePreview = false;
         } else {
           t.rangePreview = true;
@@ -257,7 +268,7 @@ function towerPreviewRange() {
   for (const t of tower) {
     if (t.rangePreview === true) {
       ctx.beginPath();
-      ctx.arc(t.x, t.y, t.range+t.radius, 0, Math.PI * 2);
+      ctx.arc(t.x, t.y, t.range + t.radius, 0, Math.PI * 2);
       ctx.fillStyle = "#aaaaaa50";
       ctx.fill();
     }
@@ -575,41 +586,56 @@ canvas.addEventListener("click", (event) => {
   }
 });
 
-function lagFiende(x, y, radius, farge, hastighet, health) {
+function lagFiende(x, y, farge, hastighet, health) {
   return {
     x: x,
     y: y,
     distance: x,
-    radius: radius,
+    radius: fiendeWidth / 2,
     farge: farge,
     hastighet: hastighet,
     hastighetX: hastighet,
     hastighetY: 0,
     health: health,
+    width: fiendeWidth,
+    height: fiendeHeight,
 
     stunned: false,
     stunDuration: 0,
   };
 }
+
 function genererWave() {
   console.log("Generer ny Wave");
-  for (i = 0; i < maksFiender; i++) {
-    fiender.push(lagFiende(x, y, radius, farge, hastighet, health));
+  for (let i = 0; i < maksFiender; i++) {
+    fiender.push(lagFiende(x, y, farge, hastighet, startHealth));
     x -= 65;
   }
-  x = -20;
+  x = -64;
   y = 100;
   maksFiender += 5;
   hastighet += 0.5;
   wave++;
-  health += 2;
+  startHealth += 2;
 }
 
-function tegnFiende(fiende) {
+function tegnFiende(ctx, fiende) {
+  if (fiendeSprite && fiendeSpriteLoaded) {
+    const tegnX = fiende.x - fiende.width / 2;
+    const tegnY = fiende.y - fiende.height / 2;
+    ctx.drawImage(
+      fiendeSprite,
+      tegnX,
+      tegnY,
+      fiende.width,
+      fiende.height
+    );
+  } else if (fiendeSpriteLoaded) {
   ctx.beginPath();
   ctx.arc(fiende.x, fiende.y, fiende.radius, 0, Math.PI * 2);
   ctx.fillStyle = fiende.farge;
   ctx.fill();
+  }
 }
 
 function tegnTower(tower) {
@@ -758,6 +784,7 @@ function oppdaterFiende(fiende) {
     }
   }
 }
+
 function clearCanvas() {
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
 }
@@ -773,7 +800,7 @@ function oppdaterAlt() {
   enemyPath();
   for (fiende of fiender) {
     oppdaterFiende(fiende);
-    tegnFiende(fiende);
+    tegnFiende(ctx, fiende);
   }
   for (const t of tower) {
     oppdaterTower(t, fiender);
@@ -795,5 +822,35 @@ function oppdaterAlt() {
   }
 }
 
-setInterval(oppdaterAlt, fpsInterval); // 60 FPS
-console.log("Game started");
+function setupFiendeSprite(callback) {
+  if (fiendeSpriteLoaded) {
+    if (callback) callback();
+    return;
+  }
+  fiendeSprite = new Image();
+  fiendeSprite.src = fiendeSpriteSRC;
+  fiendeSprite.onload = () => {
+    fiendeSpriteLoaded = true;
+    if (callback) callback();
+  };
+  fiendeSprite.onerror = () => {
+    fiendeSpriteLoaded = true;
+    fiendeSprite = null;
+    console.error("Failed to load fiende sprite.");
+  }
+  startGameLoop();
+}
+
+
+function startGameLoop(){
+  if (!gameIsRunning) {
+    gameIsRunning = true;
+    setInterval(oppdaterAlt, fpsInterval); // 60 FPS
+    console.log("Game started");
+    
+  }
+}
+
+
+
+setupFiendeSprite();
