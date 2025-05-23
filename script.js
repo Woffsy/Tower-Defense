@@ -33,9 +33,9 @@ let farge = "red";
 let hastighet = 1;
 let startHealth = 4;
 
-const fiendeSpriteSRC = "media/fiende.png";
-const fiendeWidth = 128;
-const fiendeHeight = 128;
+const fiendeSpriteSRC = "media/fiende.gif";
+const fiendeWidth = 64;
+const fiendeHeight = 64;
 
 let fiendeSprite = null;
 let fiendeSpriteLoaded = false;
@@ -255,12 +255,12 @@ addEventListener("click", (event) => {
         t.y + t.radius > y
       ) {
         console.log("Clicked on tower");
-        if (t.rangePreview === true) {
-          t.rangePreview = false;
-        } else {
-          t.rangePreview = true;
-        }
-      }
+          if (t.rangePreview === true) {
+            t.rangePreview = false;
+          } else {
+            t.rangePreview = true;
+          }
+      } 
   }
 });
 
@@ -623,18 +623,12 @@ function tegnFiende(ctx, fiende) {
   if (fiendeSprite && fiendeSpriteLoaded) {
     const tegnX = fiende.x - fiende.width / 2;
     const tegnY = fiende.y - fiende.height / 2;
-    ctx.drawImage(
-      fiendeSprite,
-      tegnX,
-      tegnY,
-      fiende.width,
-      fiende.height
-    );
+    ctx.drawImage(fiendeSprite, tegnX, tegnY, fiende.width, fiende.height);
   } else if (fiendeSpriteLoaded) {
-  ctx.beginPath();
-  ctx.arc(fiende.x, fiende.y, fiende.radius, 0, Math.PI * 2);
-  ctx.fillStyle = fiende.farge;
-  ctx.fill();
+    ctx.beginPath();
+    ctx.arc(fiende.x, fiende.y, fiende.radius, 0, Math.PI * 2);
+    ctx.fillStyle = fiende.farge;
+    ctx.fill();
   }
 }
 
@@ -837,20 +831,16 @@ function setupFiendeSprite(callback) {
     fiendeSpriteLoaded = true;
     fiendeSprite = null;
     console.error("Failed to load fiende sprite.");
-  }
+  };
   startGameLoop();
 }
 
-
-function startGameLoop(){
+function startGameLoop() {
   if (!gameIsRunning) {
     gameIsRunning = true;
     setInterval(oppdaterAlt, fpsInterval); // 60 FPS
     console.log("Game started");
-    
   }
 }
-
-
 
 setupFiendeSprite();
